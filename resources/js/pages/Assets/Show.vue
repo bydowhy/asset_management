@@ -25,25 +25,42 @@ const props = defineProps<{
 const statusVariant = (s: string) =>
     s === 'active' ? 'default' : s === 'inactive' ? 'secondary' : 'destructive';
 
+
+/* ===================== Helper yang tahan data kosong ===================== */
+// Backend bisa mengirim 'asset_type' (snake) atau 'assetType' (camel) tergantung
+// konfigurasi serialisasi Laravel. Kita cek keduanya.
+const assetType = computed(() =>
+    props.asset.asset_type ?? props.asset.assetType ?? null
+);
+
+const definitions = computed(() =>
+    assetType.value?.definitions ?? []
+);
+
 /* ===================== Spesifikasi ===================== */
 const specDialogOpen = ref(false);
+
+const initialSpecs: Record<string, string> = {};
+for (const def of definitions.value) {
+    const existing = (props.asset.specifications ?? []).find(
+        (s: any) => s.definition_id === def.id
+    );
+    initialSpecs[def.id] = existing?.value ?? '';
+}
+
 const specForm = useForm({
-    specifications: Object.fromEntries(
-        props.asset.asset_type.definitions.map((d: any) => {
-            const existing = props.asset.specifications.find((s: any) => s.definition_id === d.id);
-            return [d.id, existing?.value ?? ''];
-        })
-    ),
+    specifications: initialSpecs,
 });
 
 function openSpecDialog() {
-    // Re-init ketika dibuka (nilai terbaru)
-    specForm.specifications = Object.fromEntries(
-        props.asset.asset_type.definitions.map((d: any) => {
-            const existing = props.asset.specifications.find((s: any) => s.definition_id === d.id);
-            return [d.id, existing?.value ?? ''];
-        })
-    );
+    const fresh: Record<string, string> = {};
+    for (const def of definitions.value) {
+        const existing = (props.asset.specifications ?? []).find(
+            (s: any) => s.definition_id === def.id
+        );
+        fresh[def.id] = existing?.value ?? '';
+    }
+    specForm.specifications = fresh;
     specDialogOpen.value = true;
 }
 
@@ -69,8 +86,10 @@ function submitRelationship() {
 }
 
 function endRelationship(rel: any) {
-    const validTo = prompt('Tanggal berakhir (YYYY-MM-DD HH:mm):',
-        new Date().toISOString().slice(0, 16));
+    const validTo = prompt(
+        'Tanggal berakhir (YYYY-MM-DD HH:mm):',
+        new Date().toISOString().slice(0, 16)
+    );
     if (!validTo) return;
     useForm({ valid_to: validTo }).patch(`/relationships/${rel.id}/end`);
 }
@@ -82,7 +101,7 @@ function endRelationship(rel: any) {
         <!-- Header -->
         <div class="flex items-start justify-between">
             <div>
-                <h1 class="text-2xl font-bold">{{ asset.asset_code }} — {{ asset.asset_type?.name }}</h1>
+                <h1 class="text-2xl font-bold">{{ asset.asset_code }} — {{ assetType?.name }}</h1>
                 <p class="text-muted-foreground">
                     {{ asset.manufacturer ?? '-' }} {{ asset.model ?? '' }}
                     · SN: {{ asset.serial_number ?? '-' }}
@@ -154,7 +173,7 @@ function endRelationship(rel: any) {
                             <DialogContent>
                                 <DialogHeader><DialogTitle>Edit Specifications</DialogTitle></DialogHeader>
                                 <div class="space-y-3 max-h-[60vh] overflow-y-auto py-2">
-                                    <div v-for="def in asset.asset_type.definitions" :key="def.id">
+                                    <div v-for="def in definitions" :key="def.id">
                                         <label class="text-sm font-medium">
                                             {{ def.name }}
                                             <span v-if="def.unit" class="text-muted-foreground">({{ def.unit }})</span>

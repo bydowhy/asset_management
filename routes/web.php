@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquipmentAssetController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FailureController;
+use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Failures
     Route::resource('failures', FailureController::class);
+
+    // Locations
+    Route::resource('locations', LocationController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

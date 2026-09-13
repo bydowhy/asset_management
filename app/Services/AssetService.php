@@ -39,7 +39,7 @@ class AssetService
     public function getDetail(Asset $asset): Asset
     {
         return $asset->load([
-            'assetType',
+            'assetType.definitions' => fn ($q) => $q->orderBy('sort_order'),
             'specifications.definition',
             'equipmentAssignments.equipment.location',
             'outgoingRelationships.targetAsset.assetType',

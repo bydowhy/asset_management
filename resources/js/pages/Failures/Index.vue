@@ -16,14 +16,14 @@ const props = defineProps<{
     filters: Record<string, string | undefined>;
 }>();
 
-const assetId = ref(props.filters.asset_id ?? '');
+const assetId = ref(props.filters.asset_id || 'all');
 const failureType = ref(props.filters.failure_type ?? '');
 const from = ref(props.filters.from ?? '');
 const to = ref(props.filters.to ?? '');
 
 watch([assetId, failureType, from, to], () => {
     router.get('/failures', {
-        asset_id: assetId.value,
+        asset_id: assetId.value === 'all' ? '' : assetId.value,
         failure_type: failureType.value,
         from: from.value,
         to: to.value,
@@ -45,7 +45,7 @@ watch([assetId, failureType, from, to], () => {
             <Select v-model="assetId">
                 <SelectTrigger class="w-50"><SelectValue placeholder="All Assets" /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Assets</SelectItem>
+                    <SelectItem value="all">All Assets</SelectItem>
                     <SelectItem v-for="a in assets" :key="a.id" :value="a.id">{{ a.asset_code }}</SelectItem>
                 </SelectContent>
             </Select>

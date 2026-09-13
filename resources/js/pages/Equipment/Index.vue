@@ -29,13 +29,12 @@ const props = defineProps<{
 }>();
 
 const search = ref(props.filters.search ?? '');
-const locationId = ref(props.filters.location_id ?? '');
+const locationId = ref(props.filters.location_id || 'all'); // sentinel
 
-// Debounced search & filter
 watch([search, locationId], () => {
     router.get('/equipment', {
         search: search.value,
-        location_id: locationId.value,
+        location_id: locationId.value === 'all' ? '' : locationId.value,
     }, {
         preserveState: true,
         replace: true,
@@ -66,7 +65,7 @@ watch([search, locationId], () => {
                     <SelectValue placeholder="All Locations" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all">All Locations</SelectItem>
                     <SelectItem v-for="loc in locations" :key="loc.id" :value="loc.id">
                         {{ loc.name }} ({{ loc.code }})
                     </SelectItem>

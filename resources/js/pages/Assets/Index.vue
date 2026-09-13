@@ -19,9 +19,9 @@ const props = defineProps<{
 }>();
 
 const search = ref(props.filters.search ?? '');
-const assetTypeId = ref(props.filters.asset_type_id ?? '');
-const status = ref(props.filters.status ?? '');
-const manufacturer = ref(props.filters.manufacturer ?? '');
+const assetTypeId = ref(props.filters.asset_type_id || 'all');
+const status = ref(props.filters.status || 'all');
+const manufacturer = ref(props.filters.manufacturer || 'all');
 
 const statusVariant = (s: string) => {
     if (s === 'active') return 'default';
@@ -32,9 +32,9 @@ const statusVariant = (s: string) => {
 watch([search, assetTypeId, status, manufacturer], () => {
     router.get('/assets', {
         search: search.value,
-        asset_type_id: assetTypeId.value,
-        status: status.value,
-        manufacturer: manufacturer.value,
+        asset_type_id: assetTypeId.value === 'all' ? '' : assetTypeId.value,
+        status: status.value === 'all' ? '' : status.value,
+        manufacturer: manufacturer.value === 'all' ? '' : manufacturer.value,
     }, { preserveState: true, replace: true });
 });
 </script>
@@ -55,7 +55,7 @@ watch([search, assetTypeId, status, manufacturer], () => {
             <Select v-model="assetTypeId">
                 <SelectTrigger class="w-45"><SelectValue placeholder="All Types" /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem v-for="t in assetTypes" :key="t.id" :value="t.id">{{ t.name }}</SelectItem>
                 </SelectContent>
             </Select>
@@ -63,7 +63,7 @@ watch([search, assetTypeId, status, manufacturer], () => {
             <Select v-model="status">
                 <SelectTrigger class="w-37.5"><SelectValue placeholder="All Status" /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="scrapped">Scrapped</SelectItem>
@@ -73,7 +73,7 @@ watch([search, assetTypeId, status, manufacturer], () => {
             <Select v-model="manufacturer">
                 <SelectTrigger class="w-45"><SelectValue placeholder="All Manufacturers" /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Manufacturers</SelectItem>
+                    <SelectItem value="all">All Manufacturers</SelectItem>
                     <SelectItem v-for="m in manufacturers" :key="m" :value="m">{{ m }}</SelectItem>
                 </SelectContent>
             </Select>
