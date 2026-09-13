@@ -18,8 +18,10 @@ class AdminSeeder extends Seeder
                 'username' => 'mirza',
                 'name' => 'Mirza',
                 'email' => 'mirza.alfarisi88@gmail.com',
-                'password' => Hash::make('rahasiaAllah'),
                 'role' => 'admin',
+                'password' => Hash::make('rahasiaAllah'),
+                'department' => 'Engineering',
+                'email_verified_at' => now()
             ],
         );
 
@@ -28,8 +30,10 @@ class AdminSeeder extends Seeder
                 'username' => 'mebel',
                 'name' => 'Mebel',
                 'email' => 'mejabelajar.mebel@gmail.com',
-                'password' => Hash::make('rahasiaAllah'),
                 'role' => 'guest',
+                'password' => Hash::make('rahasiaAllah'),
+                'department' => 'Marketing',
+                'email_verified_at' => now()
             ],
         );
     }
