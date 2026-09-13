@@ -55,10 +55,24 @@ class EquipmentController extends Controller
         $currentAssets = $this->service->getCurrentAssets($equipment);
         $assetHistory = $this->service->getAssetHistory($equipment);
 
+        $documents = \App\Models\DocumentLink::with('document.type')
+            ->where('entity_type', 'equipment')
+            ->where('entity_id', $equipment->id)
+            ->get()
+            ->pluck('document');
+
+        $photos = \App\Models\PhotoLink::with('photo')
+            ->where('entity_type', 'equipment')
+            ->where('entity_id', $equipment->id)
+            ->get()
+            ->pluck('photo');
+
         return Inertia::render('Equipment/Show', [
             'equipment' => $equipment,
             'currentAssets' => $currentAssets,
             'assetHistory' => $assetHistory,
+            'documents' => $documents,
+            'photos' => $photos,
         ]);
     }
 

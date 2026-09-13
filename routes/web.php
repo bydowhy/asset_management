@@ -6,11 +6,13 @@ use App\Http\Controllers\AssetSpecificationController;
 use App\Http\Controllers\AssetTypeController;
 use App\Http\Controllers\AssetTypeDefinitionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentTypeController;
 use App\Http\Controllers\EquipmentAssetController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FailureController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\RelationshipTypeController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +59,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('asset-types.definitions.sync');
     Route::resource('relationship-types', RelationshipTypeController::class)->except(['show']);
     Route::resource('document-types', DocumentTypeController::class)->except(['show']);
+
+    // Documents
+    Route::resource('documents', DocumentController::class)->except(['edit', 'update']);
+    Route::get('documents/{document}/download', [DocumentController::class, 'download'])
+        ->name('documents.download');
+
+    // Photos
+    Route::resource('photos', PhotoController::class)->except(['edit', 'update']);
+    Route::get('photos/{photo}/file', [PhotoController::class, 'file'])
+        ->name('photos.file');
 });
 
 require __DIR__.'/settings.php';

@@ -21,6 +21,8 @@ const props = defineProps<{
     equipment: any;
     currentAssets: any[];
     assetHistory: any[];
+    documents: any[];
+    photos: any[];
 }>();
 
 /* ===================== Install ===================== */
@@ -306,21 +308,59 @@ function removeAssignment(assignment: any) {
             </TabsContent>
 
             <!-- ============ Documents ============ -->
-            <TabsContent value="documents" class="mt-4">
-                <Card>
+            <TabsContent value="documents" class="mt-4 space-y-4">
+                <div class="flex justify-end">
+                    <Link :href="`/documents/create?entity_type=equipment&entity_id=${equipment.id}`">
+                        <Button size="sm">+ Upload Document</Button>
+                    </Link>
+                </div>
+
+                <Card v-if="documents.length === 0">
                     <CardContent class="p-8 text-center text-muted-foreground">
-                        Document management akan diimplementasikan pada modul berikutnya.
+                        Belum ada dokumen terkait equipment ini.
+                    </CardContent>
+                </Card>
+
+                <Card v-for="doc in documents" :key="doc.id">
+                    <CardContent class="flex items-center justify-between p-4">
+                        <div>
+                            <p class="font-medium">{{ doc.name }}</p>
+                            <p class="text-sm text-muted-foreground">
+                                {{ doc.type?.name }} · {{ (doc.file_size / 1024).toFixed(1) }} KB
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <a :href="`/documents/${doc.id}/download`">
+                                <Button variant="outline" size="sm">Download</Button>
+                            </a>
+                        </div>
                     </CardContent>
                 </Card>
             </TabsContent>
 
             <!-- ============ Photos ============ -->
-            <TabsContent value="photos" class="mt-4">
-                <Card>
-                    <CardContent class="p-8 text-center text-muted-foreground">
-                        Photo gallery akan diimplementasikan pada modul berikutnya.
-                    </CardContent>
-                </Card>
+            <TabsContent value="photos" class="mt-4 space-y-4">
+                <div class="flex justify-end">
+                    <Link :href="`/photos/create?entity_type=equipment&entity_id=${equipment.id}`">
+                        <Button size="sm">+ Upload Photo</Button>
+                    </Link>
+                </div>
+
+                <p v-if="photos.length === 0" class="text-center text-muted-foreground">
+                    Belum ada foto terkait equipment ini.
+                </p>
+
+                <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <div v-for="photo in photos" :key="photo.id" class="overflow-hidden rounded-lg border">
+                        <img
+                            :src="`/photos/${photo.id}/file`"
+                            :alt="photo.caption ?? photo.file_name"
+                            class="aspect-square w-full object-cover"
+                            loading="lazy"
+                        />
+                        <p class="truncate p-2 text-xs">{{ photo.caption ?? photo.file_name }}</p>
+                    </div>
+                </div>
             </TabsContent>
         </Tabs>
     </div>

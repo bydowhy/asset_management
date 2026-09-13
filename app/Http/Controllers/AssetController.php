@@ -43,6 +43,20 @@ class AssetController extends Controller
     {
         $asset = $this->assetService->getDetail($asset);
 
+        // Ambil dokumen terkait asset
+        $documents = \App\Models\DocumentLink::with('document.type')
+            ->where('entity_type', 'asset')
+            ->where('entity_id', $asset->id)
+            ->get()
+            ->pluck('document');
+
+        // Ambil foto terkait asset
+        $photos = \App\Models\PhotoLink::with('photo')
+            ->where('entity_type', 'asset')
+            ->where('entity_id', $asset->id)
+            ->get()
+            ->pluck('photo');
+
         return Inertia::render('Assets/Show', [
             'asset' => $asset,
             'currentRelationships' => $this->relationshipService->currentForAsset($asset),
@@ -51,6 +65,8 @@ class AssetController extends Controller
                 ->orderBy('asset_code')
                 ->get(['id', 'asset_code', 'asset_type_id']),
             'relationshipTypes' => RelationshipType::orderBy('name')->get(['id', 'name', 'code']),
+            'documents' => $documents,
+            'photos' => $photos,
         ]);
     }
 
