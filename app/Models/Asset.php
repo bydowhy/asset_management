@@ -39,6 +39,11 @@ class Asset extends Model
         return $this->hasMany(EquipmentAsset::class);
     }
 
+     public function equipmentAssignments(): HasMany
+    {
+        return $this->hasMany(EquipmentAsset::class, 'asset_id');
+    }
+
     public function equipment()
     {
         return $this->belongsToMany(Equipment::class, 'equipment_assets')

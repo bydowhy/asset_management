@@ -46,6 +46,11 @@ class Equipment extends Model
         return $this->morphMany(PhotoLink::class, 'entity', 'entity_type', 'entity_id');
     }
 
+    public function assetAssignments(): HasMany
+    {
+        return $this->hasMany(EquipmentAsset::class, 'equipment_id');
+    }
+
     public function currentAssetAssignments(): HasMany
     {
         return $this->assetAssignments()->whereNull('removed_at')->orderBy('relationship_role');

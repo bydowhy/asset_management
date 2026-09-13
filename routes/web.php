@@ -15,10 +15,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Equipment
-    Route::resource('equipment', EquipmentController::class)->only(['index', 'show']);
+    Route::resource('equipment', EquipmentController::class);
 
     // Assets
-    Route::resource('assets', AssetController::class)->only(['index', 'show']);
+    Route::resource('assets', AssetController::class);
 
     // Specifications
     Route::put('assets/{asset}/specifications', [AssetSpecificationController::class, 'sync'])

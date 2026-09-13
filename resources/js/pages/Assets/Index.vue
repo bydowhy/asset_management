@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -11,11 +10,6 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
-import type { BreadcrumbItem } from '@/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Assets', href: '/assets' },
-];
 
 const props = defineProps<{
     assets: any;
@@ -47,87 +41,95 @@ watch([search, assetTypeId, status, manufacturer], () => {
 
 <template>
     <Head title="Assets" />
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+    <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">Assets</h1>
+            <Link href="/assets/create">
+                <Button size="sm">+ New Asset</Button>
+            </Link>
+        </div>
 
-            <div class="flex flex-wrap items-center gap-3">
-                <Input v-model="search" placeholder="Search code, serial, model..." class="max-w-xs" />
+        <div class="flex flex-wrap items-center gap-3">
+            <Input v-model="search" placeholder="Search code, serial, model..." class="max-w-xs" />
 
-                <Select v-model="assetTypeId">
-                    <SelectTrigger class="w-45"><SelectValue placeholder="All Types" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="">All Types</SelectItem>
-                        <SelectItem v-for="t in assetTypes" :key="t.id" :value="t.id">{{ t.name }}</SelectItem>
-                    </SelectContent>
-                </Select>
+            <Select v-model="assetTypeId">
+                <SelectTrigger class="w-45"><SelectValue placeholder="All Types" /></SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem v-for="t in assetTypes" :key="t.id" :value="t.id">{{ t.name }}</SelectItem>
+                </SelectContent>
+            </Select>
 
-                <Select v-model="status">
-                    <SelectTrigger class="w-37.5"><SelectValue placeholder="All Status" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="">All Status</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                        <SelectItem value="scrapped">Scrapped</SelectItem>
-                    </SelectContent>
-                </Select>
+            <Select v-model="status">
+                <SelectTrigger class="w-37.5"><SelectValue placeholder="All Status" /></SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="scrapped">Scrapped</SelectItem>
+                </SelectContent>
+            </Select>
 
-                <Select v-model="manufacturer">
-                    <SelectTrigger class="w-45"><SelectValue placeholder="All Manufacturers" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="">All Manufacturers</SelectItem>
-                        <SelectItem v-for="m in manufacturers" :key="m" :value="m">{{ m }}</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+            <Select v-model="manufacturer">
+                <SelectTrigger class="w-45"><SelectValue placeholder="All Manufacturers" /></SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="">All Manufacturers</SelectItem>
+                    <SelectItem v-for="m in manufacturers" :key="m" :value="m">{{ m }}</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
 
-            <div class="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Manufacturer / Model</TableHead>
-                            <TableHead>Serial</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead class="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow v-for="asset in assets.data" :key="asset.id">
-                            <TableCell class="font-medium">{{ asset.asset_code }}</TableCell>
-                            <TableCell>{{ asset.asset_type?.name ?? '-' }}</TableCell>
-                            <TableCell>
-                                <div>{{ asset.manufacturer ?? '-' }}</div>
-                                <div class="text-xs text-muted-foreground">{{ asset.model ?? '' }}</div>
-                            </TableCell>
-                            <TableCell class="text-sm">{{ asset.serial_number ?? '-' }}</TableCell>
-                            <TableCell>
-                                <Badge :variant="statusVariant(asset.status)">{{ asset.status }}</Badge>
-                            </TableCell>
-                            <TableCell class="text-right">
+        <div class="rounded-md border">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Manufacturer / Model</TableHead>
+                        <TableHead>Serial</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead class="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="asset in assets.data" :key="asset.id">
+                        <TableCell class="font-medium">{{ asset.asset_code }}</TableCell>
+                        <TableCell>{{ asset.asset_type?.name ?? '-' }}</TableCell>
+                        <TableCell>
+                            <div>{{ asset.manufacturer ?? '-' }}</div>
+                            <div class="text-xs text-muted-foreground">{{ asset.model ?? '' }}</div>
+                        </TableCell>
+                        <TableCell class="text-sm">{{ asset.serial_number ?? '-' }}</TableCell>
+                        <TableCell>
+                            <Badge :variant="statusVariant(asset.status)">{{ asset.status }}</Badge>
+                        </TableCell>
+                        <TableCell class="text-right">
+                            <div class="flex justify-end gap-2">
                                 <Link :href="`/assets/${asset.id}`">
                                     <Button variant="outline" size="sm">View</Button>
                                 </Link>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow v-if="assets.data.length === 0">
-                            <TableCell colspan="6" class="h-24 text-center text-muted-foreground">
-                                No assets found.
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </div>
-
-            <div v-if="assets.links.length > 3" class="flex justify-center gap-1">
-                <Link
-                    v-for="link in assets.links" :key="link.label" :href="link.url ?? '#'"
-                    class="rounded border px-3 py-1 text-sm"
-                    :class="{ 'bg-primary text-primary-foreground': link.active, 'pointer-events-none opacity-50': !link.url }"
-                    v-html="link.label"
-                />
-            </div>
+                                <Link :href="`/assets/${asset.id}/edit`">
+                                    <Button variant="outline" size="sm">Edit</Button>
+                                </Link>
+                            </div>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow v-if="assets.data.length === 0">
+                        <TableCell colspan="6" class="h-24 text-center text-muted-foreground">
+                            No assets found.
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
-    </AppLayout>
+
+        <div v-if="assets.links.length > 3" class="flex justify-center gap-1">
+            <Link
+                v-for="link in assets.links" :key="link.label" :href="link.url ?? '#'"
+                class="rounded border px-3 py-1 text-sm"
+                :class="{ 'bg-primary text-primary-foreground': link.active, 'pointer-events-none opacity-50': !link.url }"
+                v-html="link.label"
+            />
+        </div>
+    </div>
 </template>
