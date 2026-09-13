@@ -3,11 +3,15 @@
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AssetRelationshipController;
 use App\Http\Controllers\AssetSpecificationController;
+use App\Http\Controllers\AssetTypeController;
+use App\Http\Controllers\AssetTypeDefinitionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentTypeController;
 use App\Http\Controllers\EquipmentAssetController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FailureController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\RelationshipTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -46,6 +50,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Locations
     Route::resource('locations', LocationController::class)->except(['show']);
+
+    // Master Data
+    Route::resource('asset-types', AssetTypeController::class)->except(['show']);
+    Route::put('asset-types/{assetType}/definitions', [AssetTypeDefinitionController::class, 'sync'])
+        ->name('asset-types.definitions.sync');
+    Route::resource('relationship-types', RelationshipTypeController::class)->except(['show']);
+    Route::resource('document-types', DocumentTypeController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

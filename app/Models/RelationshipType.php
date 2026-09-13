@@ -18,7 +18,7 @@ class RelationshipType extends Model
 
     protected $fillable = ['name', 'code', 'description'];
 
-    public function relationships(): HasMany
+    public function assetRelationships(): HasMany
     {
         return $this->hasMany(AssetRelationship::class);
     }
