@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Equipment extends Model
@@ -43,5 +44,10 @@ class Equipment extends Model
     public function photoLinks(): MorphMany
     {
         return $this->morphMany(PhotoLink::class, 'entity', 'entity_type', 'entity_id');
+    }
+
+    public function currentAssetAssignments(): HasMany
+    {
+        return $this->assetAssignments()->whereNull('removed_at')->orderBy('relationship_role');
     }
 }

@@ -24,6 +24,11 @@ class Document extends Model
         return ['file_size' => 'integer'];
     }
 
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(DocumentType::class, 'document_type_id');
+    }
+
     public function documentType()
     {
         return $this->belongsTo(DocumentType::class);
