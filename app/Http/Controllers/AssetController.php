@@ -9,6 +9,7 @@ use App\Models\RelationshipType;
 use App\Services\AssetRelationshipService;
 use App\Services\AssetService;
 use App\Services\AssetSpecificationService;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ class AssetController extends Controller
         protected AssetService $assetService,
         protected AssetRelationshipService $relationshipService,
         protected AssetSpecificationService $specService,
+        protected AuditLogService $audit,
     ) {}
 
     public function index(Request $request)
@@ -96,10 +98,12 @@ class AssetController extends Controller
             'description' => $data['description'] ?? null,
         ]);
 
-        // Simpan spesifikasi
         if (! empty($data['specifications'])) {
             $this->specService->sync($asset, $data['specifications']);
         }
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log('create', 'asset', $asset->id, "Created asset {$asset->asset_code}");
 
         return redirect()
             ->route('assets.show', $asset->id)
@@ -134,8 +138,10 @@ class AssetController extends Controller
             'description' => $data['description'] ?? null,
         ]);
 
-        // Sinkronisasi spesifikasi
         $this->specService->sync($asset, $data['specifications'] ?? []);
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log('update', 'asset', $asset->id, "Updated asset {$asset->asset_code}");
 
         return redirect()
             ->route('assets.show', $asset->id)
@@ -144,7 +150,6 @@ class AssetController extends Controller
 
     public function destroy(Asset $asset)
     {
-        // Business rule: hanya asset tanpa instalasi aktif yang boleh dihapus
         $activeInstall = $asset->equipmentAssignments()->whereNull('removed_at')->exists();
         if ($activeInstall) {
             return back()->withErrors([
@@ -152,7 +157,14 @@ class AssetController extends Controller
             ]);
         }
 
+        // Simpan referensi sebelum delete
+        $assetCode = $asset->asset_code;
+        $assetId = $asset->id;
+
         $asset->delete();
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log('delete', 'asset', $assetId, "Deleted asset {$assetCode}");
 
         return redirect()
             ->route('assets.index')

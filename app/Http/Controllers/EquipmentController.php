@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEquipmentRequest;
 use App\Models\Equipment;
 use App\Models\Location;
+use App\Services\AuditLogService;
 use App\Services\EquipmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,12 +13,10 @@ use Inertia\Inertia;
 
 class EquipmentController extends Controller
 {
-    protected EquipmentService $service;
-
-    public function __construct(EquipmentService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(
+        protected EquipmentService $service,
+        protected AuditLogService $audit,
+    ) {}
 
     public function index(Request $request)
     {
@@ -90,6 +89,9 @@ class EquipmentController extends Controller
 
         $equipment = Equipment::create($data);
 
+        // ✅ Audit SEBELUM return
+        $this->audit->log('create', 'equipment', $equipment->id, "Created equipment {$equipment->tag}");
+
         return redirect()
             ->route('equipment.show', $equipment->id)
             ->with('success', 'Equipment berhasil dibuat.');
@@ -107,6 +109,9 @@ class EquipmentController extends Controller
     {
         $equipment->update($request->validated());
 
+        // ✅ Audit SEBELUM return
+        $this->audit->log('update', 'equipment', $equipment->id, "Updated equipment {$equipment->tag}");
+
         return redirect()
             ->route('equipment.show', $equipment->id)
             ->with('success', 'Equipment berhasil diperbarui.');
@@ -114,7 +119,6 @@ class EquipmentController extends Controller
 
     public function destroy(Equipment $equipment)
     {
-        // Business rule V1: hanya equipment tanpa asset assignment aktif yang boleh dihapus
         $activeAssignments = $equipment->assetAssignments()->whereNull('removed_at')->count();
         if ($activeAssignments > 0) {
             return back()->withErrors([
@@ -122,7 +126,14 @@ class EquipmentController extends Controller
             ]);
         }
 
+        // Simpan referensi sebelum delete
+        $tag = $equipment->tag;
+        $equipmentId = $equipment->id;
+
         $equipment->delete();
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log('delete', 'equipment', $equipmentId, "Deleted equipment {$tag}");
 
         return redirect()
             ->route('equipment.index')

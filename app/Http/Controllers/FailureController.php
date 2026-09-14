@@ -9,9 +9,14 @@ use App\Models\Failure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\AuditLogService;
 
 class FailureController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $audit,
+    ) {}
+
     public function index(Request $request)
     {
         $query = Failure::with('asset.assetType', 'createdBy');
@@ -55,7 +60,15 @@ class FailureController extends Controller
         $data['id'] = (string) Str::uuid();
         $data['created_by'] = $request->user()->id;
 
-        Failure::create($data);
+        $failure = Failure::create($data);
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log(
+            'create',
+            'failure',
+            $failure->id,
+            "Reported failure '{$failure->failure_type}' on asset {$failure->asset->asset_code}"
+        );
 
         return redirect()->route('failures.index')->with('success', 'Failure berhasil dicatat.');
     }
@@ -78,6 +91,9 @@ class FailureController extends Controller
     public function update(UpdateFailureRequest $request, Failure $failure)
     {
         $failure->update($request->validated());
+
+        // ✅ Audit SEBELUM return
+        $this->audit->log('update', 'failure', $failure->id, "Updated failure {$failure->failure_type}");
 
         return redirect()->route('failures.show', $failure)->with('success', 'Failure berhasil diperbarui.');
     }

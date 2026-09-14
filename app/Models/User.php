@@ -50,7 +50,7 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
-    public function failures(): HasMany
+    public function createdFailures(): HasMany
     {
         return $this->hasMany(Failure::class, 'created_by');
     }
@@ -67,6 +67,6 @@ class User extends Authenticatable implements PasskeyUser
 
     public function auditLogs(): HasMany
     {
-        return $this->hasMany(AuditLog::class);
+        return $this->hasMany(AuditLog::class, 'user_id');
     }
 }

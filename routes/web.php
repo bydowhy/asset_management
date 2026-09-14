@@ -5,6 +5,7 @@ use App\Http\Controllers\AssetRelationshipController;
 use App\Http\Controllers\AssetSpecificationController;
 use App\Http\Controllers\AssetTypeController;
 use App\Http\Controllers\AssetTypeDefinitionController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentTypeController;
@@ -14,11 +15,18 @@ use App\Http\Controllers\FailureController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\RelationshipTypeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (semua user yang login)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Equipment
@@ -69,6 +77,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('photos', PhotoController::class)->except(['edit', 'update']);
     Route::get('photos/{photo}/file', [PhotoController::class, 'file'])
         ->name('photos.file');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin-Only Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    // Users
+    Route::resource('users', UserController::class)->except(['show']);
+
+    // Audit Logs (read-only)
+    Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 });
 
 require __DIR__.'/settings.php';
