@@ -62,6 +62,7 @@ const actionVariant = (a: string) => {
                     <SelectItem value="update">Update</SelectItem>
                     <SelectItem value="delete">Delete</SelectItem>
                     <SelectItem value="login">Login</SelectItem>
+                    <SelectItem value="logout">Logout</SelectItem>
                 </SelectContent>
             </Select>
 

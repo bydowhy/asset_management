@@ -17,6 +17,7 @@ class AuditLogService
         string $entityType,
         ?string $entityId = null,
         ?string $description = null,
+        ?string $userId = null,
     ): void {
         $userId = Auth::id();
 
