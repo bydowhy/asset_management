@@ -6,6 +6,7 @@ use App\Http\Requests\SyncAssetTypeDefinitionsRequest;
 use App\Models\AssetType;
 use App\Services\AssetTypeDefinitionService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class AssetTypeDefinitionController extends Controller
 {

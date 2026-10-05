@@ -15,24 +15,24 @@ class AssetTypeSeeder extends Seeder
             [
                 'name' => 'Pump', 'code' => 'PUMP',
                 'definitions' => [
-                    ['Flow Rate', 'flow_rate',  'number', 'm3/h'],
-                    ['Head',      'head',       'number', 'm'],
-                    ['Power',     'power',      'number', 'kW'],
+                    ['Flow Rate', 'flow_rate',  'integer', 'm3/h'],
+                    ['Head',      'head',       'integer', 'm'],
+                    ['Power',     'power',      'integer', 'kW'],
                 ],
             ],
             [
                 'name' => 'Motor', 'code' => 'MOTOR',
                 'definitions' => [
-                    ['Voltage',   'voltage',    'number', 'V'],
-                    ['Current',   'current',    'number', 'A'],
-                    ['RPM',       'rpm',        'number', 'rpm'],
+                    ['Voltage',   'voltage',    'integer', 'V'],
+                    ['Current',   'current',    'integer', 'A'],
+                    ['RPM',       'rpm',        'integer', 'rpm'],
                 ],
             ],
             [
                 'name' => 'Valve', 'code' => 'VALVE',
                 'definitions' => [
-                    ['Size',      'size',       'number', 'inch'],
-                    ['Pressure',  'pressure',   'number', 'bar'],
+                    ['Size',      'size',       'integer', 'inch'],
+                    ['Pressure',  'pressure',   'integer', 'bar'],
                     ['Material',  'material',   'text',   null],
                 ],
             ],

@@ -42,15 +42,20 @@ type DefinitionRow = {
     sort_order: number;
 };
 
-const initialDefs: DefinitionRow[] = (props.assetType.definitions ?? []).map((d: any) => ({
-    id: d.id,
-    name: d.name,
-    code: d.code,
-    data_type: d.data_type,
-    unit: d.unit ?? '',
-    is_required: !!d.is_required,
-    sort_order: d.sort_order,
-}));
+const allowedDataTypes = ['decimal', 'integer', 'varchar', 'boolean', 'text'];
+
+const initialDefs: DefinitionRow[] = (props.assetType.definitions ?? []).map((d: any) => {
+    const raw = String(d.data_type ?? '').trim().toLowerCase();
+    return {
+        id: d.id,
+        name: d.name,
+        code: d.code,
+        data_type: allowedDataTypes.includes(raw) ? raw : 'integer',
+        unit: d.unit ?? '',
+        is_required: !!d.is_required,
+        sort_order: d.sort_order,
+    };
+});
 
 const defForm = useForm({
     definitions: initialDefs as DefinitionRow[],
@@ -148,10 +153,14 @@ function submitDefinitions() {
             </CardHeader>
             <CardContent>
                 <div
-                    v-if="defForm.errors.definitions"
-                    class="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"
-                >
-                    {{ defForm.errors.definitions }}
+                    v-if="Object.keys(defForm.errors).length > 0"
+                    class="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                    <p class="font-medium">Validation errors:</p>
+                    <ul class="list-disc pl-5">
+                        <li v-for="(error, key) in defForm.errors" :key="key">
+                            <strong>{{ key }}</strong>: {{ error }}
+                        </li>
+                    </ul>
                 </div>
 
                 <div class="rounded-md border overflow-x-auto">

@@ -5,6 +5,9 @@ import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import { Toaster } from '@/components/ui/sonner';
 import type { BreadcrumbItem } from '@/types';
+import { useFlashToast } from '@/composables/useFlashToast';
+
+useFlashToast();
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -22,6 +25,6 @@ withDefaults(defineProps<Props>(), {
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />
         </AppContent>
-        <Toaster />
+        <Toaster position="top-right" richColors />
     </AppShell>
 </template>
