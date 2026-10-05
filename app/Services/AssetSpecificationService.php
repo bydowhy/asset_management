@@ -33,13 +33,17 @@ class AssetSpecificationService
             ->where('is_required', true)
             ->pluck('id');
 
+        $missing = [];
         foreach ($required as $defId) {
-            if (! isset($values[$defId]) || $values[$defId] === '' || $values[$defId] === null) {
-                $def = $asset->assetType->definitions()->find($defId);
-                throw ValidationException::withMessages([
-                    'specifications' => "Spesifikasi '{$def->name}' wajib diisi.",
-                ]);
+            $val = $values[$defId] ?? null;
+            if ($val === '' || $val === null) {
+                $def = $asset->assetType->definitions->firstWhere('id', $defId);
+                $missing["specifications.{$defId}"] = "Spesifikasi '{$def->name}' wajib diisi.";
             }
+        }
+
+        if (! empty($missing)) {
+            throw ValidationException::withMessages($missing);
         }
 
         DB::transaction(function () use ($asset, $values) {

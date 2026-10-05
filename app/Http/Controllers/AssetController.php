@@ -11,6 +11,7 @@ use App\Services\AssetService;
 use App\Services\AssetSpecificationService;
 use App\Services\AuditLogService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -87,22 +88,24 @@ class AssetController extends Controller
     {
         $data = $request->validated();
 
-        $asset = Asset::create([
-            'id' => (string) Str::uuid(),
-            'asset_code' => $data['asset_code'],
-            'asset_type_id' => $data['asset_type_id'],
-            'manufacturer' => $data['manufacturer'] ?? null,
-            'model' => $data['model'] ?? null,
-            'serial_number' => $data['serial_number'] ?? null,
-            'status' => $data['status'],
-            'description' => $data['description'] ?? null,
-        ]);
+        // Transaksi: kalau specService->sync() throw, Asset::create() ikut rollback
+        $asset = DB::transaction(function () use ($data) {
+            $asset = Asset::create([
+                'id' => (string) Str::uuid(),
+                'asset_code' => $data['asset_code'],
+                'asset_type_id' => $data['asset_type_id'],
+                'manufacturer' => $data['manufacturer'] ?? null,
+                'model' => $data['model'] ?? null,
+                'serial_number' => $data['serial_number'] ?? null,
+                'status' => $data['status'],
+                'description' => $data['description'] ?? null,
+            ]);
 
-        if (! empty($data['specifications'])) {
-            $this->specService->sync($asset, $data['specifications']);
-        }
+            $this->specService->sync($asset, $data['specifications'] ?? []);
 
-        // ✅ Audit SEBELUM return
+            return $asset;
+        });
+
         $this->audit->log('create', 'asset', $asset->id, "Created asset {$asset->asset_code}");
 
         return redirect()
@@ -128,19 +131,20 @@ class AssetController extends Controller
     {
         $data = $request->validated();
 
-        $asset->update([
-            'asset_code' => $data['asset_code'],
-            'asset_type_id' => $data['asset_type_id'],
-            'manufacturer' => $data['manufacturer'] ?? null,
-            'model' => $data['model'] ?? null,
-            'serial_number' => $data['serial_number'] ?? null,
-            'status' => $data['status'],
-            'description' => $data['description'] ?? null,
-        ]);
+        DB::transaction(function () use ($asset, $data) {
+            $asset->update([
+                'asset_code' => $data['asset_code'],
+                'asset_type_id' => $data['asset_type_id'],
+                'manufacturer' => $data['manufacturer'] ?? null,
+                'model' => $data['model'] ?? null,
+                'serial_number' => $data['serial_number'] ?? null,
+                'status' => $data['status'],
+                'description' => $data['description'] ?? null,
+            ]);
 
-        $this->specService->sync($asset, $data['specifications'] ?? []);
+            $this->specService->sync($asset, $data['specifications'] ?? []);
+        });
 
-        // ✅ Audit SEBELUM return
         $this->audit->log('update', 'asset', $asset->id, "Updated asset {$asset->asset_code}");
 
         return redirect()

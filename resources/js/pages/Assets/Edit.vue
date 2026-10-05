@@ -31,6 +31,10 @@ const form = useForm({
     specifications: initialSpecs,
 });
 
+const hasSpecErrors = computed(() =>
+    Object.keys(form.errors).some((k) => k.startsWith('specifications.'))
+);
+
 const selectedType = computed(() =>
     props.assetTypes.find((t) => t.id === form.asset_type_id)
 );
@@ -120,13 +124,32 @@ function destroy() {
                 <CardTitle>Specifications</CardTitle>
             </CardHeader>
             <CardContent class="space-y-3">
+                <!-- Banner error global -->
+                <div
+                    v-if="hasSpecErrors"
+                    class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                >
+                    <p class="font-medium">Spesifikasi belum lengkap</p>
+                    <p class="text-xs">Lengkapi field yang ditandai merah di bawah.</p>
+                </div>
+
                 <div v-for="def in definitions" :key="def.id">
                     <label class="text-sm font-medium">
                         {{ def.name }}
                         <span v-if="def.unit" class="text-muted-foreground">({{ def.unit }})</span>
                         <span v-if="def.is_required" class="text-red-500">*</span>
                     </label>
-                    <Input v-model="form.specifications[def.id]" :placeholder="def.name" />
+                    <Input
+                        v-model="form.specifications[def.id]"
+                        :placeholder="def.name"
+                        :class="{ 'border-red-500': form.errors[`specifications.${def.id}`] }"
+                    />
+                    <p
+                        v-if="form.errors[`specifications.${def.id}`]"
+                        class="mt-1 text-xs text-red-500"
+                    >
+                        {{ form.errors[`specifications.${def.id}`] }}
+                    </p>
                 </div>
             </CardContent>
         </Card>
