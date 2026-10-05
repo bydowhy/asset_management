@@ -11,7 +11,9 @@ const props = defineProps<{ failure: any }>();
     <div class="max-w-3xl space-y-4 p-4">
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">{{ failure.failure_type }}</h1>
-            <Link :href="`/failures/${failure.id}/edit`">
+            <Link
+                v-if="$page.props.auth?.user?.role === 'admin' || $page.props.auth?.user?.id === failure.created_by"
+                :href="`/failures/${failure.id}/edit`">
                 <Button size="sm" variant="outline">Edit</Button>
             </Link>
         </div>
@@ -19,7 +21,7 @@ const props = defineProps<{ failure: any }>();
         <Card>
             <CardHeader><CardTitle>Detail</CardTitle></CardHeader>
             <CardContent class="space-y-3 text-sm">
-                <div><span class="font-medium">Asset:</span>
+                <div><span class="font-medium">Asset: </span>
                     <Link :href="`/assets/${failure.asset_id}`" class="text-blue-600 hover:underline">
                         {{ failure.asset?.asset_code }}
                     </Link>

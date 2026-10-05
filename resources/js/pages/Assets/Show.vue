@@ -13,6 +13,8 @@ import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { computed, ref } from 'vue';
+import PhotoLightbox from '@/components/PhotoLightbox.vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
     asset: any;
@@ -85,6 +87,12 @@ function submitRelationship() {
     relForm.post(`/assets/${props.asset.id}/relationships`, {
         onSuccess: () => { relDialogOpen.value = false; relForm.reset(); },
     });
+}
+
+/* ===================== Delete Photo ===================== */
+function deletePhoto(photo: any) {
+    if (!confirm(`Hapus foto "${photo.caption ?? photo.file_name}"?`)) return;
+    router.delete(`/photos/${photo.id}`, { preserveScroll: true });
 }
 
 function endRelationship(rel: any) {
@@ -359,6 +367,7 @@ function endRelationship(rel: any) {
                 </Card>
             </TabsContent>
 
+            <!-- ============ Photos ============ -->
             <TabsContent value="photos" class="mt-4 space-y-4">
                 <div class="flex justify-end">
                     <Link :href="`/photos/create?entity_type=asset&entity_id=${asset.id}`">
@@ -370,17 +379,7 @@ function endRelationship(rel: any) {
                     Belum ada foto terkait asset ini.
                 </p>
 
-                <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    <div v-for="photo in photos" :key="photo.id" class="overflow-hidden rounded-lg border">
-                        <img
-                            :src="`/photos/${photo.id}/file`"
-                            :alt="photo.caption ?? photo.file_name"
-                            class="aspect-square w-full object-cover"
-                            loading="lazy"
-                        />
-                        <p class="truncate p-2 text-xs">{{ photo.caption ?? photo.file_name }}</p>
-                    </div>
-                </div>
+                <PhotoLightbox v-else :photos="photos" :show-delete="true" @delete="deletePhoto"/>
             </TabsContent>
         </Tabs>
     </div>

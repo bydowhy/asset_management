@@ -6,10 +6,11 @@ use App\Http\Requests\StoreFailureRequest;
 use App\Http\Requests\UpdateFailureRequest;
 use App\Models\Asset;
 use App\Models\Failure;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use App\Services\AuditLogService;
 
 class FailureController extends Controller
 {
@@ -82,19 +83,32 @@ class FailureController extends Controller
 
     public function edit(Failure $failure)
     {
+        $failure->load('asset');
+
         return Inertia::render('Failures/Edit', [
             'failure' => $failure,
-            'assets' => Asset::orderBy('asset_code')->get(['id', 'asset_code']),
         ]);
     }
 
     public function update(UpdateFailureRequest $request, Failure $failure)
     {
+        // Hanya creator atau admin yang boleh edit
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $failure->created_by !== $user->id) {
+            abort(403, 'Anda tidak berhak mengubah failure ini.');
+        }
+
         $failure->update($request->validated());
 
-        // ✅ Audit SEBELUM return
-        $this->audit->log('update', 'failure', $failure->id, "Updated failure {$failure->failure_type}");
+        $this->audit->log(
+            'update',
+            'failure',
+            $failure->id,
+            "Updated failure '{$failure->failure_type}' on asset {$failure->asset->asset_code}"
+        );
 
-        return redirect()->route('failures.show', $failure)->with('success', 'Failure berhasil diperbarui.');
+        return redirect()
+            ->route('failures.show', $failure)
+            ->with('success', 'Failure berhasil diperbarui.');
     }
 }

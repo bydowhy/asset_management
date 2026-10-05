@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dialog';
 import { Wrench } from '@lucide/vue';
 import { ref } from 'vue';
+import PhotoLightbox from '@/components/PhotoLightbox.vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
     equipment: any;
@@ -52,6 +54,12 @@ const replaceForm = useForm({
     close_relationships: true,
     notes: '',
 });
+
+/* ===================== Delete Photo ===================== */
+function deletePhoto(photo: any) {
+    if (!confirm(`Hapus foto "${photo.caption ?? photo.file_name}"?`)) return;
+    router.delete(`/photos/${photo.id}`, { preserveScroll: true });
+}
 
 function openReplace(assignment: any) {
     replacingAssignment.value = assignment;
@@ -350,17 +358,7 @@ function removeAssignment(assignment: any) {
                     Belum ada foto terkait equipment ini.
                 </p>
 
-                <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    <div v-for="photo in photos" :key="photo.id" class="overflow-hidden rounded-lg border">
-                        <img
-                            :src="`/photos/${photo.id}/file`"
-                            :alt="photo.caption ?? photo.file_name"
-                            class="aspect-square w-full object-cover"
-                            loading="lazy"
-                        />
-                        <p class="truncate p-2 text-xs">{{ photo.caption ?? photo.file_name }}</p>
-                    </div>
-                </div>
+                <PhotoLightbox v-else :photos="photos" :show-delete="true" @delete="deletePhoto"/>
             </TabsContent>
         </Tabs>
     </div>
