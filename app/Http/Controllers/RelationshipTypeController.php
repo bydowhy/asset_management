@@ -6,9 +6,14 @@ use App\Http\Requests\StoreRelationshipTypeRequest;
 use App\Models\RelationshipType;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\AuditLogService;
 
 class RelationshipTypeController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $audit,
+    ) {}
+
     public function index()
     {
         $types = RelationshipType::withCount('assetRelationships')
@@ -30,7 +35,14 @@ class RelationshipTypeController extends Controller
         $data = $request->validated();
         $data['id'] = (string) Str::uuid();
 
-        RelationshipType::create($data);
+        $relationshipType = RelationshipType::create($data);
+
+        $this->audit->log(
+            'create',
+            'relationship_type',
+            $relationshipType->id,
+            "Created relationship type {$relationshipType->code} ({$relationshipType->name})"
+        );
 
         return redirect()
             ->route('relationship-types.index')
@@ -48,6 +60,13 @@ class RelationshipTypeController extends Controller
     {
         $relationshipType->update($request->validated());
 
+        $this->audit->log(
+            'update',
+            'relationship_type',
+            $relationshipType->id,
+            "Updated relationship type {$relationshipType->code} ({$relationshipType->name})"
+        );
+
         return redirect()
             ->route('relationship-types.index')
             ->with('success', 'Relationship Type berhasil diperbarui.');
@@ -61,7 +80,18 @@ class RelationshipTypeController extends Controller
             ]);
         }
 
+        $typeId = $relationshipType->id;
+        $typeCode = $relationshipType->code;
+        $typeName = $relationshipType->name;
+
         $relationshipType->delete();
+
+        $this->audit->log(
+            'delete',
+            'relationship_type',
+            $typeId,
+            "Deleted relationship type {$typeCode} ({$typeName})"
+        );
 
         return redirect()
             ->route('relationship-types.index')

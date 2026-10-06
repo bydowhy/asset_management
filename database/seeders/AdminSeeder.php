@@ -30,7 +30,7 @@ class AdminSeeder extends Seeder
                 'username' => 'mebel',
                 'name' => 'Mebel',
                 'email' => 'mejabelajar.mebel@gmail.com',
-                'role' => 'guest',
+                'role' => 'user',
                 'password' => Hash::make('rahasiaAllah'),
                 'department' => 'Marketing',
                 'email_verified_at' => now()

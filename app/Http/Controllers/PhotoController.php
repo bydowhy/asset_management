@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\AuditLogService;
 
 class PhotoController extends Controller
 {
     public function __construct(
         protected MediaService $media,
+        protected AuditLogService $audit,
     ) {}
 
     public function index()
@@ -54,6 +56,13 @@ class PhotoController extends Controller
             $data['entity_id'] ?? null,
         );
 
+        $this->audit->log(
+            'create',
+            'photo',
+            $photo->id,
+            "Uploaded photo \"{$photo->file_name}\""
+        );
+
         return redirect()->route('photos.index')
             ->with('success', 'Foto berhasil diunggah.');
     }
@@ -88,7 +97,17 @@ class PhotoController extends Controller
             abort(403, 'Anda tidak berhak menghapus foto ini.');
         }
 
+        $photoId = $photo->id;
+        $photoName = $photo->file_name;
+
         $this->media->deletePhoto($photo);
+
+        $this->audit->log(
+            'delete',
+            'photo',
+            $photoId,
+            "Deleted photo \"{$photoName}\""
+        );
 
         return redirect()->route('photos.index')
             ->with('success', 'Foto berhasil dihapus.');

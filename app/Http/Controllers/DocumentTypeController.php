@@ -6,9 +6,14 @@ use App\Http\Requests\StoreDocumentTypeRequest;
 use App\Models\DocumentType;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\AuditLogService;
 
 class DocumentTypeController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $audit,
+    ) {}
+
     public function index()
     {
         $types = DocumentType::withCount('documents')
@@ -30,7 +35,14 @@ class DocumentTypeController extends Controller
         $data = $request->validated();
         $data['id'] = (string) Str::uuid();
 
-        DocumentType::create($data);
+        $documentType = DocumentType::create($data);
+
+        $this->audit->log(
+            'create',
+            'document_type',
+            $documentType->id,
+            "Created document type {$documentType->code}"
+        );
 
         return redirect()
             ->route('document-types.index')
@@ -48,6 +60,13 @@ class DocumentTypeController extends Controller
     {
         $documentType->update($request->validated());
 
+        $this->audit->log(
+            'update',
+            'document_type',
+            $documentType->id,
+            "Updated document type {$documentType->code}"
+        );
+
         return redirect()
             ->route('document-types.index')
             ->with('success', 'Document Type berhasil diperbarui.');
@@ -61,7 +80,18 @@ class DocumentTypeController extends Controller
             ]);
         }
 
+        $documentTypeId = $documentType->id;
+        $documentTypeCode = $documentType->code;
+        $documentTypeName = $documentType->name;
+
         $documentType->delete();
+
+        $this->audit->log(
+            'delete',
+            'document_type',
+            $documentTypeId,
+            "Deleted document type {$documentTypeCode} ({$documentTypeName})"
+        );
 
         return redirect()
             ->route('document-types.index')

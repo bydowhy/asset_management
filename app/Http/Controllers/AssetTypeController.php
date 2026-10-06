@@ -6,9 +6,14 @@ use App\Http\Requests\StoreAssetTypeRequest;
 use App\Models\AssetType;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\AuditLogService;
 
 class AssetTypeController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $audit,
+    ) {}
+
     public function index()
     {
         $assetTypes = AssetType::withCount(['assets', 'definitions'])
@@ -32,6 +37,13 @@ class AssetTypeController extends Controller
 
         $assetType = AssetType::create($data);
 
+        $this->audit->log(
+            'create', 
+            'asset_type', 
+            $assetType->id, 
+            "Created asset type {$assetType->code}"
+        );
+
         return redirect()
             ->route('asset-types.edit', $assetType->id)
             ->with('success', 'Asset Type berhasil dibuat. Tambahkan spesifikasi di bawah.');
@@ -52,6 +64,13 @@ class AssetTypeController extends Controller
     {
         $assetType->update($request->validated());
 
+        $this->audit->log(
+            'update', 
+            'asset_type', 
+            $assetType->id, 
+            "Updated asset type {$assetType->code}"
+        );
+
         return redirect()
             ->route('asset-types.edit', $assetType->id)
             ->with('success', 'Asset Type berhasil diperbarui.');
@@ -59,15 +78,26 @@ class AssetTypeController extends Controller
 
     public function destroy(AssetType $assetType)
     {
-        // Restrict: tolak jika masih ada asset yang memakai
         if ($assetType->assets()->exists()) {
             return back()->withErrors([
                 'delete' => 'Tidak bisa menghapus asset type yang masih dipakai oleh asset.',
             ]);
         }
 
-        // Definitions akan terhapus otomatis via ON DELETE CASCADE
+        // 1. Simpan referensi SEBELUM delete
+        $assetTypeId = $assetType->id;
+        $assetTypeCode = $assetType->code;
+        $assetTypeName = $assetType->name;
+
         $assetType->delete();
+
+        // 2. Audit log SEBELUM return
+        $this->audit->log(
+            'delete',
+            'asset_type',
+            $assetTypeId,
+            "Deleted asset type {$assetTypeCode} ({$assetTypeName})"
+        );
 
         return redirect()
             ->route('asset-types.index')

@@ -76,6 +76,10 @@ const actionVariant = (a: string) => {
                     <SelectItem value="failure">Failure</SelectItem>
                     <SelectItem value="document">Document</SelectItem>
                     <SelectItem value="photo">Photo</SelectItem>
+                    <SelectItem value="location">Location</SelectItem>
+                    <SelectItem value="asset_type">Asset Type</SelectItem>
+                    <SelectItem value="relationship_type">Relationship Type</SelectItem>
+                    <SelectItem value="document_type">Document Type</SelectItem>
                 </SelectContent>
             </Select>
 

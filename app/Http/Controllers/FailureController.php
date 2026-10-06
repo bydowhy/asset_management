@@ -63,7 +63,6 @@ class FailureController extends Controller
 
         $failure = Failure::create($data);
 
-        // ✅ Audit SEBELUM return
         $this->audit->log(
             'create',
             'failure',

@@ -6,9 +6,14 @@ use App\Http\Requests\StoreLocationRequest;
 use App\Models\Location;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\AuditLogService;
 
 class LocationController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $audit,
+    ) {}
+
     public function index()
     {
         $locations = Location::with('parent')
@@ -34,7 +39,14 @@ class LocationController extends Controller
         $data = $request->validated();
         $data['id'] = (string) Str::uuid();
 
-        Location::create($data);
+        $location = Location::create($data);
+
+        $this->audit->log(
+            'create',
+            'location',
+            $location->id,
+            "Created location {$location->code} ({$location->name})"
+        );
 
         return redirect()
             ->route('locations.index')
@@ -52,6 +64,13 @@ class LocationController extends Controller
     public function update(StoreLocationRequest $request, Location $location)
     {
         $location->update($request->validated());
+
+        $this->audit->log(
+            'update',
+            'location',
+            $location->id,
+            "Updated location {$location->code} ({$location->name})"
+        );
 
         return redirect()
             ->route('locations.index')
@@ -71,8 +90,18 @@ class LocationController extends Controller
                 'delete' => 'Tidak bisa menghapus location yang masih memiliki equipment.',
             ]);
         }
-
+        
+        $locationId = $location->id;
+        $locationCode = $location->code;
+        $locationName = $location->name;
         $location->delete();
+
+        $this->audit->log(
+            'delete',
+            'location',
+            $locationId,
+            "Deleted location {$locationCode} ({$locationName})"
+        );
 
         return redirect()
             ->route('locations.index')

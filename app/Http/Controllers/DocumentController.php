@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\AuditLogService;
 
 class DocumentController extends Controller
 {
     public function __construct(
         protected MediaService $media,
+        protected AuditLogService $audit,
     ) {}
 
     public function index(Request $request)
@@ -66,6 +68,13 @@ class DocumentController extends Controller
             $data['entity_id'] ?? null,
         );
 
+        $this->audit->log(
+            'create',
+            'document',
+            $document->id,
+            "Uploaded document \"{$document->name}\""
+        );
+
         return redirect()->route('documents.index')
             ->with('success', "Dokumen \"{$document->name}\" berhasil diunggah.");
     }
@@ -97,7 +106,17 @@ class DocumentController extends Controller
             abort(403, 'Anda tidak berhak menghapus dokumen ini.');
         }
 
+        $documentId = $document->id;
+        $documentName = $document->name;
+
         $this->media->deleteDocument($document);
+
+        $this->audit->log(
+            'delete',
+            'document',
+            $documentId,
+            "Deleted document \"{$documentName}\""
+        );
 
         return redirect()->route('documents.index')
             ->with('success', 'Dokumen berhasil dihapus.');
