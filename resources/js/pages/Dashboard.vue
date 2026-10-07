@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wrench, Package, CheckCircle, AlertTriangle } from '@lucide/vue';
-import type { BreadcrumbItem } from '@/types';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-];
+type EquipmentAttentionItem = {
+    id: string;
+    tag: string;
+    name: string;
+    failure_count: number;
+};
 
 const props = defineProps<{
     stats: {
@@ -18,7 +19,7 @@ const props = defineProps<{
     };
     assetStatus: Record<string, number>;
     latestFailures: any[];
-    equipmentAttention: any[];
+    equipmentAttention: EquipmentAttentionItem[];
     latestDocuments: any[];
     latestPhotos: any[];
 }>();
@@ -97,15 +98,24 @@ const props = defineProps<{
                 </CardHeader>
                 <CardContent>
                     <ul class="space-y-2">
-                        <li v-for="item in equipmentAttention" :key="item.id" class="flex items-center justify-between border-b pb-2 last:border-0">
-                            <Link :href="`/equipment/${item.id}`" class="font-medium hover:underline">
-                                {{ item.asset_code }}
+                        <li
+                            v-for="item in equipmentAttention"
+                            :key="item.id"
+                            class="flex items-center justify-between border-b pb-2 last:border-0"
+                        >
+                            <Link
+                                :href="`/equipment/${item.id}`"
+                                class="font-medium hover:underline"
+                            >
+                                {{ item.tag }} — {{ item.name }}
                             </Link>
                             <span class="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-                                {{ item.failure_count }} failures
+                                {{ item.failure_count }} {{ item.failure_count === 1 ? 'failure' : 'failures' }}
                             </span>
                         </li>
-                        <li v-if="equipmentAttention.length === 0" class="text-muted-foreground">No data available.</li>
+                        <li v-if="equipmentAttention.length === 0" class="text-muted-foreground">
+                            No equipment failures in the last 90 days.
+                        </li>
                     </ul>
                 </CardContent>
             </Card>

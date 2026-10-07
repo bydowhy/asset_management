@@ -13,7 +13,6 @@ class ReplaceAssetRequest extends FormRequest
         return [
             'asset_id' => ['required', 'string', 'exists:assets,id'],
             'replaced_at' => ['required', 'date'],
-            'close_relationships' => ['boolean'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

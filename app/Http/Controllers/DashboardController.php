@@ -15,6 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         $thirtyDaysAgo = Carbon::now()->subDays(30);
+        $ninetyDaysAgo = Carbon::now()->subDays(90);
 
         // Stat cards
         $totalEquipment = Equipment::count();
@@ -34,12 +35,22 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Equipment attention (failure terbanyak 90 hari terakhir)
-        $ninetyDaysAgo = Carbon::now()->subDays(90);
-        $equipmentAttention = Failure::selectRaw('assets.id, assets.asset_code, assets.asset_type_id, count(*) as failure_count')
-            ->join('assets', 'failures.asset_id', '=', 'assets.id')
-            ->where('failure_date', '>=', $ninetyDaysAgo)
-            ->groupBy('assets.id', 'assets.asset_code', 'assets.asset_type_id')
+        // Equipment Attention (90d) — HANYA failure setelah instalasi terakhir asset aktif
+        $equipmentAttention = Equipment::select('equipment.id', 'equipment.tag', 'equipment.name')
+            ->selectRaw('COUNT(failures.id) as failure_count')
+            ->join('equipment_assets', function ($join) {
+                $join->on('equipment_assets.equipment_id', '=', 'equipment.id')
+                    ->whereNull('equipment_assets.removed_at'); // hanya assignment aktif
+            })
+            ->join('assets', 'assets.id', '=', 'equipment_assets.asset_id')
+            ->join('failures', function ($join) use ($ninetyDaysAgo) {
+                $join->on('failures.asset_id', '=', 'assets.id')
+                    ->where('failures.failure_date', '>=', $ninetyDaysAgo)
+                    // KUNCI: failure harus terjadi setelah asset ini dipasang di equipment ini
+                    ->whereColumn('failures.failure_date', '>=', 'equipment_assets.installed_at');
+            })
+            ->groupBy('equipment.id', 'equipment.tag', 'equipment.name')
+            ->havingRaw('COUNT(failures.id) > 0')
             ->orderByDesc('failure_count')
             ->limit(5)
             ->get();

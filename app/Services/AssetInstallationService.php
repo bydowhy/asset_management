@@ -11,12 +11,20 @@ use Illuminate\Validation\ValidationException;
 
 class AssetInstallationService
 {
+    public function __construct(
+        protected AssetRelationshipService $relationships,
+    ) {}
+
     /**
-     * Pasang asset ke equipment. Gagal jika asset sudah aktif terpasang di equipment lain.
+     * Pasang asset ke equipment.
+     * - Blokir jika asset scrapped
+     * - Set status asset → active
      */
     public function install(Equipment $equipment, array $data): EquipmentAsset
     {
         $asset = Asset::findOrFail($data['asset_id']);
+
+        $this->ensureNotScrapped($asset);
 
         // Business rule: satu asset tidak boleh aktif di dua equipment sekaligus
         $activeElsewhere = EquipmentAsset::where('asset_id', $asset->id)
@@ -31,7 +39,6 @@ class AssetInstallationService
         }
 
         // Business rule: satu equipment tidak boleh punya dua asset aktif dengan role sama
-        // (opsional, bisa diaktifkan sesuai kebutuhan)
         $sameRoleActive = EquipmentAsset::where('equipment_id', $equipment->id)
             ->where('relationship_role', $data['relationship_role'])
             ->whereNull('removed_at')
@@ -43,19 +50,27 @@ class AssetInstallationService
             ]);
         }
 
-        return EquipmentAsset::create([
-            'id' => (string) Str::uuid(),
-            'equipment_id' => $equipment->id,
-            'asset_id' => $asset->id,
-            'relationship_role' => $data['relationship_role'],
-            'installed_at' => $data['installed_at'],
-            'removed_at' => null,
-            'notes' => $data['notes'] ?? null,
-        ]);
+        return DB::transaction(function () use ($equipment, $asset, $data) {
+            $assignment = EquipmentAsset::create([
+                'id' => (string) Str::uuid(),
+                'equipment_id' => $equipment->id,
+                'asset_id' => $asset->id,
+                'relationship_role' => $data['relationship_role'],
+                'installed_at' => $data['installed_at'],
+                'removed_at' => null,
+                'notes' => $data['notes'] ?? null,
+            ]);
+
+            // Auto-set status asset menjadi active
+            $asset->update(['status' => 'active']);
+
+            return $assignment;
+        });
     }
 
     /**
-     * Lepas asset dari equipment (set removed_at).
+     * Lepas asset dari equipment.
+     * - Set status asset → inactive
      */
     public function remove(EquipmentAsset $assignment, string $removedAt, ?string $notes = null): EquipmentAsset
     {
@@ -71,20 +86,26 @@ class AssetInstallationService
             ]);
         }
 
-        $assignment->update([
-            'removed_at' => $removedAt,
-            'notes' => $notes ?? $assignment->notes,
-        ]);
+        return DB::transaction(function () use ($assignment, $removedAt, $notes) {
+            $assignment->update([
+                'removed_at' => $removedAt,
+                'notes' => $notes ?? $assignment->notes,
+            ]);
 
-        return $assignment->fresh();
+            // Auto-set status asset menjadi inactive
+            $assignment->asset->update(['status' => 'inactive']);
+
+            return $assignment->fresh();
+        });
     }
 
     /**
      * Ganti asset dalam satu equipment secara atomik:
      *  - Tutup assignment lama (set removed_at)
+     *  - Set status asset lama → inactive
+     *  - Auto-transfer semua relationship fungsional ke asset baru
      *  - Buat assignment baru dengan role yang sama
-     *  - Tutup relationship fungsional lama (jika ada)
-     *  - Buat relationship fungsional baru (jika ditentukan)
+     *  - Set status asset baru → active
      */
     public function replace(Equipment $equipment, EquipmentAsset $oldAssignment, array $data): EquipmentAsset
     {
@@ -97,6 +118,8 @@ class AssetInstallationService
 
             $newAsset = Asset::findOrFail($data['asset_id']);
 
+            $this->ensureNotScrapped($newAsset);
+
             // Business rule: asset baru tidak boleh aktif di equipment lain
             $activeElsewhere = EquipmentAsset::where('asset_id', $newAsset->id)
                 ->whereNull('removed_at')
@@ -108,21 +131,22 @@ class AssetInstallationService
                 ]);
             }
 
+            $oldAsset = $oldAssignment->asset;
+
             // 1. Tutup assignment lama
             $oldAssignment->update(['removed_at' => $data['replaced_at']]);
 
-            // 2. Tutup relationship fungsional lama (jika ada)
-            if ($data['close_relationships'] ?? true) {
-                \App\Models\AssetRelationship::where('source_asset_id', $oldAssignment->asset_id)
-                    ->whereNull('valid_to')
-                    ->update(['valid_to' => $data['replaced_at']]);
+            // 2. Set status asset lama → inactive
+            $oldAsset->update(['status' => 'inactive']);
 
-                \App\Models\AssetRelationship::where('target_asset_id', $oldAssignment->asset_id)
-                    ->whereNull('valid_to')
-                    ->update(['valid_to' => $data['replaced_at']]);
-            }
+            // 3. Auto-transfer relationship aktif dari asset lama → asset baru
+            $this->relationships->transferActiveFrom(
+                $oldAsset,
+                $newAsset,
+                $data['replaced_at']
+            );
 
-            // 3. Buat assignment baru
+            // 4. Buat assignment baru
             $newAssignment = EquipmentAsset::create([
                 'id' => (string) Str::uuid(),
                 'equipment_id' => $equipment->id,
@@ -130,13 +154,25 @@ class AssetInstallationService
                 'relationship_role' => $oldAssignment->relationship_role,
                 'installed_at' => $data['replaced_at'],
                 'removed_at' => null,
-                'notes' => $data['notes'] ?? "Menggantikan {$oldAssignment->asset->asset_code}",
+                'notes' => $data['notes'] ?? "Menggantikan {$oldAsset->asset_code}",
             ]);
 
-            // 4. Update status asset lama -> inactive (opsional, sesuai workflow)
-            $oldAssignment->asset->update(['status' => 'inactive']);
+            // 5. Set status asset baru → active
+            $newAsset->update(['status' => 'active']);
 
             return $newAssignment;
         });
+    }
+
+    /**
+     * Pastikan asset tidak dalam status scrapped.
+     */
+    private function ensureNotScrapped(Asset $asset): void
+    {
+        if ($asset->status === 'scrapped') {
+            throw ValidationException::withMessages([
+                'asset_id' => "Asset {$asset->asset_code} sudah berstatus scrapped dan tidak bisa dipasang.",
+            ]);
+        }
     }
 }

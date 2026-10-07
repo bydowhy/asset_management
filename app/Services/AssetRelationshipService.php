@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Asset;
 use App\Models\AssetRelationship;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AssetRelationshipService
 {
@@ -42,9 +42,6 @@ class AssetRelationshipService
         return $relationship->fresh();
     }
 
-    /**
-     * Ganti relationship atomik: tutup yang lama + buat yang baru.
-     */
     public function replace(AssetRelationship $old, array $data): AssetRelationship
     {
         return DB::transaction(function () use ($old, $data) {
@@ -77,5 +74,97 @@ class AssetRelationshipService
             ->where('source_asset_id', $asset->id)
             ->orderBy('valid_from', 'desc')
             ->get();
+    }
+
+    /**
+     * Transfer semua relationship aktif dari $oldAsset ke $newAsset.
+     *
+     * Menangani DUA arah:
+     *   1. Old asset sebagai SOURCE  →  new asset menggantikan posisi source
+     *   2. Old asset sebagai TARGET  →  new asset menggantikan posisi target
+     *
+     * Untuk setiap relasi:
+     *   - Relasi lama ditutup (valid_to = $at)
+     *   - Relasi baru dibuat dengan new asset di posisi yang sama
+     *   - Skip self-loop & duplikat
+     */
+    public function transferActiveFrom(Asset $oldAsset, Asset $newAsset, string $at): void
+    {
+        if ($oldAsset->id === $newAsset->id) {
+            return;
+        }
+
+        // ============================================================
+        // PART 1 — Old asset sebagai SOURCE
+        // (mis. MTR-00120 CONNECTED_TO PMP-00120 → jadi MTR-00121 CONNECTED_TO PMP-00120)
+        // ============================================================
+        $asSource = AssetRelationship::where('source_asset_id', $oldAsset->id)
+            ->whereNull('valid_to')
+            ->get();
+
+        foreach ($asSource as $rel) {
+            $rel->update(['valid_to' => $at]);
+
+            // Skip jika target = new asset (mencegah self-loop)
+            if ($rel->target_asset_id === $newAsset->id) {
+                continue;
+            }
+
+            // Skip jika sudah ada relasi identik yang aktif
+            if ($this->hasActive($newAsset->id, $rel->target_asset_id, $rel->relationship_type_id)) {
+                continue;
+            }
+
+            AssetRelationship::create([
+                'id' => (string) Str::uuid(),
+                'source_asset_id' => $newAsset->id,
+                'target_asset_id' => $rel->target_asset_id,
+                'relationship_type_id' => $rel->relationship_type_id,
+                'valid_from' => $at,
+                'valid_to' => null,
+                'description' => "Auto-transferred from {$oldAsset->asset_code}",
+            ]);
+        }
+
+        // ============================================================
+        // PART 2 — Old asset sebagai TARGET
+        // (mis. INV-00122 DRIVES MTR-00120 → jadi INV-00122 DRIVES MTR-00121)
+        // ============================================================
+        $asTarget = AssetRelationship::where('target_asset_id', $oldAsset->id)
+            ->whereNull('valid_to')
+            ->get();
+
+        foreach ($asTarget as $rel) {
+            $rel->update(['valid_to' => $at]);
+
+            // Skip jika source = new asset (mencegah self-loop)
+            if ($rel->source_asset_id === $newAsset->id) {
+                continue;
+            }
+
+            // Skip jika sudah ada relasi identik yang aktif
+            if ($this->hasActive($rel->source_asset_id, $newAsset->id, $rel->relationship_type_id)) {
+                continue;
+            }
+
+            AssetRelationship::create([
+                'id' => (string) Str::uuid(),
+                'source_asset_id' => $rel->source_asset_id,
+                'target_asset_id' => $newAsset->id,
+                'relationship_type_id' => $rel->relationship_type_id,
+                'valid_from' => $at,
+                'valid_to' => null,
+                'description' => "Auto-transferred from {$oldAsset->asset_code}",
+            ]);
+        }
+    }
+
+    private function hasActive(string $sourceId, string $targetId, string $typeId): bool
+    {
+        return AssetRelationship::where('source_asset_id', $sourceId)
+            ->where('target_asset_id', $targetId)
+            ->where('relationship_type_id', $typeId)
+            ->whereNull('valid_to')
+            ->exists();
     }
 }
