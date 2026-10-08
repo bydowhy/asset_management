@@ -75,22 +75,16 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Tidak bisa hapus diri sendiri
         if ($user->id === Auth::id()) {
-            return back()->withErrors([
-                'delete' => 'Anda tidak bisa menghapus akun Anda sendiri.',
-            ]);
+            return back()->with('error', 'Anda tidak bisa menghapus akun Anda sendiri.');
         }
 
-        // Restrict: cek referensi
         $hasDocs = $user->uploadedDocuments()->exists();
         $hasPhotos = $user->uploadedPhotos()->exists();
         $hasFailures = $user->createdFailures()->exists();
 
         if ($hasDocs || $hasPhotos || $hasFailures) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus user yang memiliki dokumen, foto, atau failure terkait.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus user yang memiliki dokumen, foto, atau failure terkait.');
         }
 
         $username = $user->username;

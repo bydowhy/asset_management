@@ -75,9 +75,7 @@ class RelationshipTypeController extends Controller
     public function destroy(RelationshipType $relationshipType)
     {
         if ($relationshipType->assetRelationships()->exists()) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus relationship type yang masih dipakai oleh asset relationship.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus relationship type yang masih dipakai.');
         }
 
         $typeId = $relationshipType->id;
@@ -86,12 +84,7 @@ class RelationshipTypeController extends Controller
 
         $relationshipType->delete();
 
-        $this->audit->log(
-            'delete',
-            'relationship_type',
-            $typeId,
-            "Deleted relationship type {$typeCode} ({$typeName})"
-        );
+        $this->audit->log('delete', 'relationship_type', $typeId, "Deleted relationship type {$typeCode} ({$typeName})");
 
         return redirect()
             ->route('relationship-types.index')

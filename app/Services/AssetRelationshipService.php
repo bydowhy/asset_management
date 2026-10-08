@@ -18,15 +18,21 @@ class AssetRelationshipService
             ]);
         }
 
-        return AssetRelationship::create([
-            'id' => (string) Str::uuid(),
-            'source_asset_id' => $source->id,
-            'target_asset_id' => $data['target_asset_id'],
-            'relationship_type_id' => $data['relationship_type_id'],
-            'valid_from' => $data['valid_from'],
-            'valid_to' => null,
-            'description' => $data['description'] ?? null,
-        ]);
+        try {
+            return AssetRelationship::create([
+                'id' => (string) Str::uuid(),
+                'source_asset_id' => $source->id,
+                'target_asset_id' => $data['target_asset_id'],
+                'relationship_type_id' => $data['relationship_type_id'],
+                'valid_from' => $data['valid_from'],
+                'valid_to' => null,
+                'description' => $data['description'] ?? null,
+            ]);
+        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            throw ValidationException::withMessages([
+                'valid_from' => 'Relationship dengan kombinasi ini pada tanggal tersebut sudah ada.',
+            ]);
+        }
     }
 
     public function end(AssetRelationship $relationship, string $validTo): AssetRelationship
@@ -157,6 +163,25 @@ class AssetRelationshipService
                 'description' => "Auto-transferred from {$oldAsset->asset_code}",
             ]);
         }
+    }
+
+    /**
+     * Tutup SEMUA relationship aktif yang melibatkan asset ini (source atau target).
+     * Dipakai saat asset di-remove dari equipment — karena secara fungsional
+     * asset tersebut sudah tidak terpasang di manapun.
+     *
+     * Berbeda dengan transferActiveFrom():
+     *  - transferActiveFrom → ada penggantinya (asset baru)
+     *  - closeAllActiveFor  → tidak ada pengganti, hanya ditutup
+     */
+    public function closeAllActiveFor(Asset $asset, string $at): void
+    {
+        AssetRelationship::where(function ($q) use ($asset) {
+                $q->where('source_asset_id', $asset->id)
+                ->orWhere('target_asset_id', $asset->id);
+            })
+            ->whereNull('valid_to')
+            ->update(['valid_to' => $at]);
     }
 
     private function hasActive(string $sourceId, string $targetId, string $typeId): bool

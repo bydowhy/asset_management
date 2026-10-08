@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,7 @@ import {
 import { Wrench } from '@lucide/vue';
 import { ref } from 'vue';
 import PhotoLightbox from '@/components/PhotoLightbox.vue';
-import { router } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
     equipment: any;
@@ -57,7 +57,6 @@ const replaceForm = useForm({
 
 /* ===================== Delete Photo ===================== */
 function deletePhoto(photo: any) {
-    if (!confirm(`Hapus foto "${photo.caption ?? photo.file_name}"?`)) return;
     router.delete(`/photos/${photo.id}`, { preserveScroll: true });
 }
 
@@ -87,7 +86,12 @@ function removeAssignment(assignment: any) {
     );
     if (!removedAt) return;
 
-    useForm({ removed_at: removedAt }).patch(`/assignments/${assignment.id}/remove`);
+    useForm({ removed_at: removedAt }).patch(`/assignments/${assignment.id}/remove`, {
+        preserveScroll: true,
+        onError: (errors) => {
+            Object.values(errors).forEach((msg) => toast.error(msg));
+        },
+    });
 }
 </script>
 

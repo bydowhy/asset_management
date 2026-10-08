@@ -68,14 +68,23 @@ class DocumentController extends Controller
             $data['entity_id'] ?? null,
         );
 
-        $this->audit->log(
-            'create',
-            'document',
-            $document->id,
-            "Uploaded document \"{$document->name}\""
-        );
+        $this->audit->log('create', 'document', $document->id, "Uploaded document \"{$document->name}\"");
 
-        return redirect()->route('documents.index')
+        // Smart redirect: kalau upload dari entity page, kembali ke entity tersebut
+        if (($data['entity_type'] ?? null) === 'equipment' && ! empty($data['entity_id'])) {
+            return redirect()
+                ->route('equipment.show', $data['entity_id'])
+                ->with('success', "Dokumen \"{$document->name}\" berhasil diunggah.");
+        }
+
+        if (($data['entity_type'] ?? null) === 'asset' && ! empty($data['entity_id'])) {
+            return redirect()
+                ->route('assets.show', $data['entity_id'])
+                ->with('success', "Dokumen \"{$document->name}\" berhasil diunggah.");
+        }
+
+        return redirect()
+            ->route('documents.index')
             ->with('success', "Dokumen \"{$document->name}\" berhasil diunggah.");
     }
 
@@ -118,7 +127,6 @@ class DocumentController extends Controller
             "Deleted document \"{$documentName}\""
         );
 
-        return redirect()->route('documents.index')
-            ->with('success', 'Dokumen berhasil dihapus.');
+        return back()->with('success', 'Dokumen berhasil dihapus.');
     }
 }

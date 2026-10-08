@@ -79,25 +79,16 @@ class AssetTypeController extends Controller
     public function destroy(AssetType $assetType)
     {
         if ($assetType->assets()->exists()) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus asset type yang masih dipakai oleh asset.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus asset type yang masih dipakai oleh asset.');
         }
 
-        // 1. Simpan referensi SEBELUM delete
         $assetTypeId = $assetType->id;
         $assetTypeCode = $assetType->code;
         $assetTypeName = $assetType->name;
 
         $assetType->delete();
 
-        // 2. Audit log SEBELUM return
-        $this->audit->log(
-            'delete',
-            'asset_type',
-            $assetTypeId,
-            "Deleted asset type {$assetTypeCode} ({$assetTypeName})"
-        );
+        $this->audit->log('delete', 'asset_type', $assetTypeId, "Deleted asset type {$assetTypeCode} ({$assetTypeName})");
 
         return redirect()
             ->route('asset-types.index')

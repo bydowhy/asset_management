@@ -121,18 +121,14 @@ class EquipmentController extends Controller
     {
         $activeAssignments = $equipment->assetAssignments()->whereNull('removed_at')->count();
         if ($activeAssignments > 0) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus equipment yang masih memiliki asset aktif.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus equipment yang masih memiliki asset aktif.');
         }
 
-        // Simpan referensi sebelum delete
         $tag = $equipment->tag;
         $equipmentId = $equipment->id;
 
         $equipment->delete();
 
-        // ✅ Audit SEBELUM return
         $this->audit->log('delete', 'equipment', $equipmentId, "Deleted equipment {$tag}");
 
         return redirect()

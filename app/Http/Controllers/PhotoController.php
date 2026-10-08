@@ -56,14 +56,23 @@ class PhotoController extends Controller
             $data['entity_id'] ?? null,
         );
 
-        $this->audit->log(
-            'create',
-            'photo',
-            $photo->id,
-            "Uploaded photo \"{$photo->file_name}\""
-        );
+        $this->audit->log('create', 'photo', $photo->id, "Uploaded photo \"{$photo->file_name}\"");
 
-        return redirect()->route('photos.index')
+        // Smart redirect: kalau upload dari entity page, kembali ke entity tersebut
+        if (($data['entity_type'] ?? null) === 'equipment' && ! empty($data['entity_id'])) {
+            return redirect()
+                ->route('equipment.show', $data['entity_id'])
+                ->with('success', 'Foto berhasil diunggah.');
+        }
+
+        if (($data['entity_type'] ?? null) === 'asset' && ! empty($data['entity_id'])) {
+            return redirect()
+                ->route('assets.show', $data['entity_id'])
+                ->with('success', 'Foto berhasil diunggah.');
+        }
+
+        return redirect()
+            ->route('photos.index')
             ->with('success', 'Foto berhasil diunggah.');
     }
 
@@ -109,7 +118,6 @@ class PhotoController extends Controller
             "Deleted photo \"{$photoName}\""
         );
 
-        return redirect()->route('photos.index')
-            ->with('success', 'Foto berhasil dihapus.');
+        return back()->with('success', 'Foto berhasil dihapus.');
     }
 }

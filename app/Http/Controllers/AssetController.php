@@ -156,18 +156,14 @@ class AssetController extends Controller
     {
         $activeInstall = $asset->equipmentAssignments()->whereNull('removed_at')->exists();
         if ($activeInstall) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus asset yang masih terpasang di equipment.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus asset yang masih terpasang di equipment.');
         }
 
-        // Simpan referensi sebelum delete
         $assetCode = $asset->asset_code;
         $assetId = $asset->id;
 
         $asset->delete();
 
-        // ✅ Audit SEBELUM return
         $this->audit->log('delete', 'asset', $assetId, "Deleted asset {$assetCode}");
 
         return redirect()

@@ -80,28 +80,20 @@ class LocationController extends Controller
     public function destroy(Location $location)
     {
         if ($location->children()->exists()) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus location yang masih memiliki sub-location.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus location yang masih memiliki sub-location.');
         }
 
         if ($location->equipment()->exists()) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus location yang masih memiliki equipment.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus location yang masih memiliki equipment.');
         }
-        
+
         $locationId = $location->id;
         $locationCode = $location->code;
         $locationName = $location->name;
+
         $location->delete();
 
-        $this->audit->log(
-            'delete',
-            'location',
-            $locationId,
-            "Deleted location {$locationCode} ({$locationName})"
-        );
+        $this->audit->log('delete', 'location', $locationId, "Deleted location {$locationCode} ({$locationName})");
 
         return redirect()
             ->route('locations.index')

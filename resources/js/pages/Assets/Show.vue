@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { computed, ref } from 'vue';
 import PhotoLightbox from '@/components/PhotoLightbox.vue';
-import { router } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
     asset: any;
@@ -91,7 +91,6 @@ function submitRelationship() {
 
 /* ===================== Delete Photo ===================== */
 function deletePhoto(photo: any) {
-    if (!confirm(`Hapus foto "${photo.caption ?? photo.file_name}"?`)) return;
     router.delete(`/photos/${photo.id}`, { preserveScroll: true });
 }
 
@@ -101,7 +100,13 @@ function endRelationship(rel: any) {
         new Date().toISOString().slice(0, 16)
     );
     if (!validTo) return;
-    useForm({ valid_to: validTo }).patch(`/relationships/${rel.id}/end`);
+
+    useForm({ valid_to: validTo }).patch(`/relationships/${rel.id}/end`, {
+        preserveScroll: true,
+        onError: (errors) => {
+            Object.values(errors).forEach((msg) => toast.error(msg));
+        },
+    });
 }
 </script>
 
@@ -252,7 +257,14 @@ function endRelationship(rel: any) {
                                     </div>
                                     <div>
                                         <label class="text-sm font-medium">Valid From</label>
-                                        <Input type="datetime-local" v-model="relForm.valid_from" />
+                                        <Input
+                                            type="datetime-local"
+                                            v-model="relForm.valid_from"
+                                            :class="{ 'border-red-500': relForm.errors.valid_from }"
+                                        />
+                                        <p v-if="relForm.errors.valid_from" class="text-xs text-red-500">
+                                            {{ relForm.errors.valid_from }}
+                                        </p>
                                     </div>
                                     <div>
                                         <label class="text-sm font-medium">Description</label>

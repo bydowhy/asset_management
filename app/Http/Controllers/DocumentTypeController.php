@@ -75,23 +75,16 @@ class DocumentTypeController extends Controller
     public function destroy(DocumentType $documentType)
     {
         if ($documentType->documents()->exists()) {
-            return back()->withErrors([
-                'delete' => 'Tidak bisa menghapus document type yang masih dipakai oleh dokumen.',
-            ]);
+            return back()->with('error', 'Tidak bisa menghapus document type yang masih dipakai.');
         }
 
-        $documentTypeId = $documentType->id;
-        $documentTypeCode = $documentType->code;
-        $documentTypeName = $documentType->name;
+        $typeId = $documentType->id;
+        $typeCode = $documentType->code;
+        $typeName = $documentType->name;
 
         $documentType->delete();
 
-        $this->audit->log(
-            'delete',
-            'document_type',
-            $documentTypeId,
-            "Deleted document type {$documentTypeCode} ({$documentTypeName})"
-        );
+        $this->audit->log('delete', 'document_type', $typeId, "Deleted document type {$typeCode} ({$typeName})");
 
         return redirect()
             ->route('document-types.index')

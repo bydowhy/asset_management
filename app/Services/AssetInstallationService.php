@@ -68,10 +68,6 @@ class AssetInstallationService
         });
     }
 
-    /**
-     * Lepas asset dari equipment.
-     * - Set status asset → inactive
-     */
     public function remove(EquipmentAsset $assignment, string $removedAt, ?string $notes = null): EquipmentAsset
     {
         if ($assignment->removed_at) {
@@ -87,13 +83,19 @@ class AssetInstallationService
         }
 
         return DB::transaction(function () use ($assignment, $removedAt, $notes) {
+            $asset = $assignment->asset;
+
+            // 1. Tutup assignment
             $assignment->update([
                 'removed_at' => $removedAt,
                 'notes' => $notes ?? $assignment->notes,
             ]);
 
-            // Auto-set status asset menjadi inactive
-            $assignment->asset->update(['status' => 'inactive']);
+            // 2. Set status asset → inactive
+            $asset->update(['status' => 'inactive']);
+
+            // 3. Auto-close semua relationship aktif asset ini
+            $this->relationships->closeAllActiveFor($asset, $removedAt);
 
             return $assignment->fresh();
         });
