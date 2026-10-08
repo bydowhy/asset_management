@@ -21,7 +21,7 @@ import { ref, watch } from 'vue';
 
 const props = defineProps<{
     equipment: any;
-    locations: any[];
+    locations: { id: string; label: string; count: number }[];
     filters: {
         location_id?: string;
         search?: string;
@@ -61,13 +61,13 @@ watch([search, locationId], () => {
                 class="max-w-xs"
             />
             <Select v-model="locationId">
-                <SelectTrigger class="w-50">
+                <SelectTrigger class="w-70">
                     <SelectValue placeholder="All Locations" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Locations</SelectItem>
                     <SelectItem v-for="loc in locations" :key="loc.id" :value="loc.id">
-                        {{ loc.name }} ({{ loc.code }})
+                        {{ loc.label }} · {{ loc.count }}
                     </SelectItem>
                 </SelectContent>
             </Select>

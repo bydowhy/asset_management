@@ -22,9 +22,10 @@ class EquipmentController extends Controller
     {
         $query = Equipment::with('location');
 
-        // Filter by location
+        // Filter by location — RECURSIVE (termasuk semua descendant)
         if ($request->filled('location_id')) {
-            $query->where('location_id', $request->location_id);
+            $locationIds = $this->collectLocationSubtreeIds($request->location_id);
+            $query->whereIn('location_id', $locationIds);
         }
 
         // Search by tag or name
@@ -32,19 +33,99 @@ class EquipmentController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('tag', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%");
+                ->orWhere('name', 'like', "%{$search}%");
             });
         }
 
         $equipment = $query->orderBy('tag')->paginate(20)->withQueryString();
 
-        $locations = Location::orderBy('name')->get(['id', 'name', 'code']);
-
         return Inertia::render('Equipment/Index', [
             'equipment' => $equipment,
-            'locations' => $locations,
+            'locations' => $this->flattenedLocationsWithCounts(),
             'filters' => $request->only(['location_id', 'search']),
         ]);
+    }
+
+    /**
+     * Kumpulkan ID lokasi + semua turunannya (recursive).
+     */
+    private function collectLocationSubtreeIds(string $rootId): array
+    {
+        $ids = [$rootId];
+        $queue = [$rootId];
+
+        while (! empty($queue)) {
+            $parentId = array_shift($queue);
+            $children = Location::where('parent_id', $parentId)->pluck('id')->all();
+
+            foreach ($children as $childId) {
+                $ids[] = $childId;
+                $queue[] = $childId;
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Bangun daftar lokasi flat dengan indentasi + count equipment di subtree.
+     * Hanya tampilkan lokasi yang punya equipment > 0 di subtree-nya.
+     */
+    private function flattenedLocationsWithCounts(): array
+    {
+        $all = Location::orderBy('name')->get();
+
+        // Hitung equipment langsung per lokasi
+        $directCounts = Equipment::selectRaw('location_id, count(*) as c')
+            ->groupBy('location_id')
+            ->pluck('c', 'location_id')
+            ->toArray();
+
+        $byParent = $all->groupBy('parent_id');
+        $subtreeCounts = [];
+
+        // Post-order: hitung total equipment di subtree dengan memoization
+        $computeSubtree = function ($node) use (&$computeSubtree, $byParent, $directCounts, &$subtreeCounts) {
+            if (isset($subtreeCounts[$node->id])) {
+                return $subtreeCounts[$node->id];
+            }
+
+            $total = $directCounts[$node->id] ?? 0;
+            foreach ($byParent->get($node->id, collect()) as $child) {
+                $total += $computeSubtree($child);
+            }
+
+            $subtreeCounts[$node->id] = $total;
+            return $total;
+        };
+
+        foreach ($all as $node) {
+            $computeSubtree($node);
+        }
+
+        // Bangun flat list dengan indentasi, skip lokasi yang subtree count = 0
+        $result = [];
+        $walk = function ($parentId, $depth) use (&$walk, &$result, $byParent, $subtreeCounts) {
+            foreach ($byParent->get($parentId, collect()) as $node) {
+                if (($subtreeCounts[$node->id] ?? 0) === 0) {
+                    // Skip lokasi ini + turunannya (karena subtree count = 0)
+                    continue;
+                }
+
+                $prefix = str_repeat('— ', $depth);
+                $result[] = [
+                    'id' => $node->id,
+                    'label' => $prefix . $node->name . ' (' . $node->code . ')',
+                    'count' => $subtreeCounts[$node->id],
+                ];
+
+                $walk($node->id, $depth + 1);
+            }
+        };
+
+        $walk(null, 0);
+
+        return $result;
     }
 
     public function show(Equipment $equipment)
@@ -89,7 +170,6 @@ class EquipmentController extends Controller
 
         $equipment = Equipment::create($data);
 
-        // ✅ Audit SEBELUM return
         $this->audit->log('create', 'equipment', $equipment->id, "Created equipment {$equipment->tag}");
 
         return redirect()
@@ -109,7 +189,6 @@ class EquipmentController extends Controller
     {
         $equipment->update($request->validated());
 
-        // ✅ Audit SEBELUM return
         $this->audit->log('update', 'equipment', $equipment->id, "Updated equipment {$equipment->tag}");
 
         return redirect()
