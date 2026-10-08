@@ -59,16 +59,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Failures
     Route::resource('failures', FailureController::class);
 
-    // Locations
-    Route::resource('locations', LocationController::class)->except(['show']);
-
-    // Master Data
-    Route::resource('asset-types', AssetTypeController::class)->except(['show']);
-    Route::put('asset-types/{assetType}/definitions', [AssetTypeDefinitionController::class, 'sync'])
-        ->name('asset-types.definitions.sync');
-    Route::resource('relationship-types', RelationshipTypeController::class)->except(['show']);
-    Route::resource('document-types', DocumentTypeController::class)->except(['show']);
-
     // Documents
     Route::resource('documents', DocumentController::class)->except(['edit', 'update']);
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])
@@ -91,6 +81,16 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
     // Audit Logs (read-only)
     Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+
+    // Locations
+    Route::resource('locations', LocationController::class)->except(['show']);
+
+    // Master Data
+    Route::resource('asset-types', AssetTypeController::class)->except(['show']);
+    Route::put('asset-types/{assetType}/definitions', [AssetTypeDefinitionController::class, 'sync'])
+        ->name('asset-types.definitions.sync');
+    Route::resource('relationship-types', RelationshipTypeController::class)->except(['show']);
+    Route::resource('document-types', DocumentTypeController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

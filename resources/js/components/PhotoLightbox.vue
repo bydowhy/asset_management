@@ -63,7 +63,7 @@ function onDelete() {
 
 <template>
     <!-- Grid thumbnail -->
-    <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+    <div class="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
         <button
             v-for="(photo, index) in photos"
             :key="photo.id"

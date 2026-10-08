@@ -67,32 +67,33 @@ const mainNavItems = computed<NavItem[]>(() => {
             href: '/photos',
             icon: Image,
         },
-        // Master Data Section
-        {
-            title: 'Locations',
-            href: '/locations',
-            icon: MapPin,
-        },
-        {
-            title: 'Asset Types',
-            href: '/asset-types',
-            icon: Boxes,
-        },
-        {
-            title: 'Relationship Types',
-            href: '/relationship-types',
-            icon: Link2,
-        },
-        {
-            title: 'Document Types',
-            href: '/document-types',
-            icon: FileType,
-        },
     ];
 
     // Admin-only menu
     if (isAdmin.value) {
         items.push(
+            // Master Data
+            {
+                title: 'Locations',
+                href: '/locations',
+                icon: MapPin,
+            },
+            {
+                title: 'Asset Types',
+                href: '/asset-types',
+                icon: Boxes,
+            },
+            {
+                title: 'Relationship Types',
+                href: '/relationship-types',
+                icon: Link2,
+            },
+            {
+                title: 'Document Types',
+                href: '/document-types',
+                icon: FileType,
+            },
+            // Admin
             {
                 title: 'Users',
                 href: '/users',
@@ -102,7 +103,7 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'Audit Logs',
                 href: '/audit-logs',
                 icon: ClipboardList,
-            }
+            },
         );
     }
 

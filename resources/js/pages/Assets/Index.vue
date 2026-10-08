@@ -15,6 +15,7 @@ const props = defineProps<{
     assets: any;
     assetTypes: any[];
     manufacturers: string[];
+    locations: { id: string; label: string; count: number }[];
     filters: Record<string, string | undefined>;
 }>();
 
@@ -22,6 +23,7 @@ const search = ref(props.filters.search ?? '');
 const assetTypeId = ref(props.filters.asset_type_id || 'all');
 const status = ref(props.filters.status || 'all');
 const manufacturer = ref(props.filters.manufacturer || 'all');
+const locationId = ref(props.filters.location_id || 'all');
 
 const statusVariant = (s: string) => {
     if (s === 'active') return 'default';
@@ -29,12 +31,13 @@ const statusVariant = (s: string) => {
     return 'destructive';
 };
 
-watch([search, assetTypeId, status, manufacturer], () => {
+watch([search, assetTypeId, status, manufacturer, locationId], () => {
     router.get('/assets', {
         search: search.value,
         asset_type_id: assetTypeId.value === 'all' ? '' : assetTypeId.value,
         status: status.value === 'all' ? '' : status.value,
         manufacturer: manufacturer.value === 'all' ? '' : manufacturer.value,
+        location_id: locationId.value === 'all' ? '' : locationId.value,
     }, { preserveState: true, replace: true });
 });
 </script>
@@ -52,6 +55,18 @@ watch([search, assetTypeId, status, manufacturer], () => {
         <div class="flex flex-wrap items-center gap-3">
             <Input v-model="search" placeholder="Search code, serial, model..." class="max-w-xs" />
 
+            <Select v-model="locationId">
+                <SelectTrigger class="w-70">
+                    <SelectValue placeholder="All Locations" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    <SelectItem v-for="loc in locations" :key="loc.id" :value="loc.id">
+                        {{ loc.label }} · {{ loc.count }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+            
             <Select v-model="assetTypeId">
                 <SelectTrigger class="w-45"><SelectValue placeholder="All Types" /></SelectTrigger>
                 <SelectContent>

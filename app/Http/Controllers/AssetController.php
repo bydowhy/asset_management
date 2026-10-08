@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAssetRequest;
 use App\Models\Asset;
 use App\Models\AssetType;
+use App\Models\Location;
 use App\Models\RelationshipType;
 use App\Services\AssetRelationshipService;
 use App\Services\AssetService;
@@ -38,8 +39,70 @@ class AssetController extends Controller
             'assets' => $assets,
             'assetTypes' => $assetTypes,
             'manufacturers' => $manufacturers,
-            'filters' => $request->only(['asset_type_id', 'status', 'manufacturer', 'search']),
+            'locations' => $this->flattenedLocationsWithAssetCounts(),
+            'filters' => $request->only(['asset_type_id', 'status', 'manufacturer', 'search', 'location_id']),
         ]);
+    }
+
+    /**
+     * Bangun daftar lokasi flat dengan indentasi + count asset yang
+     * sedang terpasang di equipment pada lokasi tersebut (termasuk turunannya).
+     */
+    private function flattenedLocationsWithAssetCounts(): array
+    {
+        $all = Location::orderBy('name')->get();
+
+        // Hitung asset yang SEDANG terpasang per lokasi (langsung)
+        $directCounts = DB::table('equipment_assets')
+            ->join('equipment', 'equipment.id', '=', 'equipment_assets.equipment_id')
+            ->whereNull('equipment_assets.removed_at')
+            ->selectRaw('equipment.location_id, count(*) as c')
+            ->groupBy('equipment.location_id')
+            ->pluck('c', 'location_id')
+            ->toArray();
+
+        $byParent = $all->groupBy('parent_id');
+        $subtreeCounts = [];
+
+        $computeSubtree = function ($node) use (&$computeSubtree, $byParent, $directCounts, &$subtreeCounts) {
+            if (isset($subtreeCounts[$node->id])) {
+                return $subtreeCounts[$node->id];
+            }
+
+            $total = $directCounts[$node->id] ?? 0;
+            foreach ($byParent->get($node->id, collect()) as $child) {
+                $total += $computeSubtree($child);
+            }
+
+            $subtreeCounts[$node->id] = $total;
+            return $total;
+        };
+
+        foreach ($all as $node) {
+            $computeSubtree($node);
+        }
+
+        $result = [];
+        $walk = function ($parentId, $depth) use (&$walk, &$result, $byParent, $subtreeCounts) {
+            foreach ($byParent->get($parentId, collect()) as $node) {
+                if (($subtreeCounts[$node->id] ?? 0) === 0) {
+                    continue;
+                }
+
+                $prefix = str_repeat('— ', $depth);
+                $result[] = [
+                    'id' => $node->id,
+                    'label' => $prefix . $node->name . ' (' . $node->code . ')',
+                    'count' => $subtreeCounts[$node->id],
+                ];
+
+                $walk($node->id, $depth + 1);
+            }
+        };
+
+        $walk(null, 0);
+
+        return $result;
     }
 
     public function show(Asset $asset)

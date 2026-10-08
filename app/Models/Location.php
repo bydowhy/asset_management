@@ -33,4 +33,25 @@ class Location extends Model
     {
         return $this->hasMany(Equipment::class);
     }
+
+    /**
+     * Kumpulkan ID lokasi ini + semua turunannya (recursive).
+     */
+    public static function descendantIds(string $rootId): array
+    {
+        $ids = [$rootId];
+        $queue = [$rootId];
+
+        while (! empty($queue)) {
+            $parentId = array_shift($queue);
+            $children = static::where('parent_id', $parentId)->pluck('id')->all();
+
+            foreach ($children as $childId) {
+                $ids[] = $childId;
+                $queue[] = $childId;
+            }
+        }
+
+        return $ids;
+    }
 }
