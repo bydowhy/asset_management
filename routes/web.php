@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('equipment', EquipmentController::class);
 
     // Assets
+    Route::get('assets/search', [AssetController::class, 'search'])->name('assets.search');
     Route::resource('assets', AssetController::class);
 
     // Specifications

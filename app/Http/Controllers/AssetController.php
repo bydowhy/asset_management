@@ -170,4 +170,32 @@ class AssetController extends Controller
             ->route('assets.index')
             ->with('success', 'Asset berhasil dihapus.');
     }
+
+    public function search(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        $query = Asset::with('assetType:id,name,code')
+            ->where('status', '!=', 'scrapped'); // jangan tampilkan asset scrapped
+
+        if ($q !== '') {
+            $query->where(function ($w) use ($q) {
+                $w->where('asset_code', 'like', "%{$q}%")
+                ->orWhere('manufacturer', 'like', "%{$q}%")
+                ->orWhere('model', 'like', "%{$q}%")
+                ->orWhere('serial_number', 'like', "%{$q}%");
+            });
+        }
+
+        $results = $query->orderBy('asset_code')->limit(20)->get();
+
+        return response()->json($results->map(fn ($a) => [
+            'id' => $a->id,
+            'asset_code' => $a->asset_code,
+            'asset_type_name' => $a->assetType?->name,
+            'manufacturer' => $a->manufacturer,
+            'model' => $a->model,
+            'status' => $a->status,
+        ]));
+    }
 }

@@ -18,6 +18,7 @@ import { Wrench } from '@lucide/vue';
 import { ref } from 'vue';
 import PhotoLightbox from '@/components/PhotoLightbox.vue';
 import { toast } from 'vue-sonner';
+import AssetCombobox from '@/components/AssetCombobox.vue';
 
 const props = defineProps<{
     equipment: any;
@@ -134,11 +135,8 @@ function removeAssignment(assignment: any) {
                             </DialogHeader>
                             <div class="space-y-3 py-2">
                                 <div>
-                                    <label class="text-sm font-medium">Asset ID</label>
-                                    <Input
-                                        v-model="installForm.asset_id"
-                                        placeholder="UUID asset"
-                                    />
+                                    <label class="text-sm font-medium">Asset *</label>
+                                    <AssetCombobox v-model="installForm.asset_id" />
                                     <p v-if="installForm.errors.asset_id" class="text-xs text-red-500">
                                         {{ installForm.errors.asset_id }}
                                     </p>
@@ -235,10 +233,10 @@ function removeAssignment(assignment: any) {
                         </DialogHeader>
                         <div class="space-y-3 py-2">
                             <div>
-                                <label class="text-sm font-medium">New Asset ID</label>
-                                <Input
+                                <label class="text-sm font-medium">Asset Pengganti *</label>
+                                <AssetCombobox
                                     v-model="replaceForm.asset_id"
-                                    placeholder="UUID asset pengganti"
+                                    :exclude-asset-id="replacingAssignment?.id"
                                 />
                                 <p v-if="replaceForm.errors.asset_id" class="text-xs text-red-500">
                                     {{ replaceForm.errors.asset_id }}
