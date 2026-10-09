@@ -9,6 +9,7 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{
     logs: any;
@@ -129,16 +130,6 @@ const actionVariant = (a: string) => {
         </div>
 
         <!-- Pagination -->
-        <div v-if="logs.links.length > 3" class="flex justify-center gap-1">
-            <button
-                v-for="link in logs.links"
-                :key="link.label"
-                :disabled="!link.url"
-                class="rounded border px-3 py-1 text-sm"
-                :class="{ 'bg-primary text-primary-foreground': link.active, 'opacity-50': !link.url }"
-                @click="link.url && router.visit(link.url, { preserveState: true })"
-                v-html="link.label"
-            />
-        </div>
+        <Pagination :links="logs.links" />
     </div>
 </template>

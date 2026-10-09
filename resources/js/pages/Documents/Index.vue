@@ -9,6 +9,7 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{
     documents: any;
@@ -94,5 +95,8 @@ function destroy(doc: any) {
                 </TableBody>
             </Table>
         </div>
+        
+        <!-- Pagination -->
+        <Pagination v-if="documents.links?.length > 3" :links="documents.links" />
     </div>
 </template>

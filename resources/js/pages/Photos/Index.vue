@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import PhotoLightbox from '@/components/PhotoLightbox.vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{ photos: any }>();
 
@@ -30,5 +31,8 @@ function destroy(photo: any) {
             :show-delete="true"
             @delete="destroy"
         />
+
+        <!-- Pagination -->
+        <Pagination v-if="photos.links?.length > 3" :links="photos.links" />
     </div>
 </template>

@@ -10,6 +10,7 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{
     assets: any;
@@ -138,13 +139,7 @@ watch([search, assetTypeId, status, manufacturer, locationId], () => {
             </Table>
         </div>
 
-        <div v-if="assets.links.length > 3" class="flex justify-center gap-1">
-            <Link
-                v-for="link in assets.links" :key="link.label" :href="link.url ?? '#'"
-                class="rounded border px-3 py-1 text-sm"
-                :class="{ 'bg-primary text-primary-foreground': link.active, 'pointer-events-none opacity-50': !link.url }"
-                v-html="link.label"
-            />
-        </div>
+        <!-- Pagination -->
+        <Pagination :links="assets.links" />
     </div>
 </template>

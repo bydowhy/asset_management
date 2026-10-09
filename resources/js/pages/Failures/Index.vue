@@ -9,6 +9,7 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{
     failures: any;
@@ -87,5 +88,7 @@ watch([assetId, failureType, from, to], () => {
                 </TableBody>
             </Table>
         </div>
+        <!-- Pagination -->
+        <Pagination :links="failures.links" />
     </div>
 </template>

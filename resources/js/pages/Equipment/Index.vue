@@ -18,6 +18,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { ref, watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
 
 const props = defineProps<{
     equipment: any;
@@ -111,18 +112,6 @@ watch([search, locationId], () => {
         </div>
 
         <!-- Pagination -->
-        <div v-if="equipment.links.length > 3" class="flex justify-center gap-1">
-            <Link
-                v-for="link in equipment.links"
-                :key="link.label"
-                :href="link.url ?? '#'"
-                class="rounded border px-3 py-1 text-sm"
-                :class="{
-                    'bg-primary text-primary-foreground': link.active,
-                    'pointer-events-none opacity-50': !link.url,
-                }"
-                v-html="link.label"
-            />
-        </div>
+        <Pagination :links="equipment.links" />
     </div>
 </template>
