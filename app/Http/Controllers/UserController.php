@@ -29,12 +29,22 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('Users/Create');
+        $actor = Auth::user();
+
+        return Inertia::render('Users/Create', [
+            'canPromote' => $actor->role === 'super_admin',
+        ]);
     }
 
     public function store(StoreUserRequest $request)
     {
+        $actor = Auth::user();
         $data = $request->validated();
+
+        if ($data['role'] === 'super_admin' && $actor->role !== 'super_admin') {
+            return back()->with('error', 'Hanya super admin yang bisa membuat akun super admin.');
+        }
+
         $data['id'] = (string) Str::uuid();
         $data['password'] = Hash::make($data['password']);
 
@@ -49,14 +59,34 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        $actor = Auth::user();
+
+        // Admin biasa tidak boleh edit super_admin
+        if ($actor->role === 'admin' && $user->role === 'super_admin') {
+            abort(403, 'Anda tidak berhak mengedit super admin.');
+        }
+
         return Inertia::render('Users/Edit', [
             'user' => $user->only(['id', 'username', 'name', 'email', 'department', 'role']),
+            'canPromote' => $actor->role === 'super_admin',
         ]);
     }
 
     public function update(StoreUserRequest $request, User $user)
     {
+        $actor = Auth::user();
+
+        // Admin biasa tidak boleh edit super_admin
+        if ($actor->role === 'admin' && $user->role === 'super_admin') {
+            abort(403, 'Anda tidak berhak mengedit super admin.');
+        }
+
         $data = $request->validated();
+
+        // Hanya super_admin yang boleh set role ke super_admin
+        if ($data['role'] === 'super_admin' && $actor->role !== 'super_admin') {
+            return back()->with('error', 'Hanya super admin yang bisa menetapkan role super admin.');
+        }
 
         if (empty($data['password'])) {
             unset($data['password']);
@@ -75,10 +105,19 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->id === Auth::id()) {
+        $actor = Auth::user();
+
+        // 1. Tidak bisa hapus diri sendiri (semua role)
+        if ($user->id === $actor->id) {
             return back()->with('error', 'Anda tidak bisa menghapus akun Anda sendiri.');
         }
 
+        // 2. Admin (non-super) tidak bisa hapus super_admin
+        if ($actor->role === 'admin' && $user->role === 'super_admin') {
+            return back()->with('error', 'Anda tidak berhak menghapus super admin.');
+        }
+
+        // 3. Cek referensi (dokumen, foto, failure)
         $hasDocs = $user->uploadedDocuments()->exists();
         $hasPhotos = $user->uploadedPhotos()->exists();
         $hasFailures = $user->createdFailures()->exists();

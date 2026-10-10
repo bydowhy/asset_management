@@ -7,13 +7,15 @@ use App\Models\Asset;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Equipment;
+use App\Models\User;
+use App\Services\AuditLogService;
 use App\Services\MediaService;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use App\Services\AuditLogService;
 
 class DocumentController extends Controller
 {
@@ -109,9 +111,10 @@ class DocumentController extends Controller
 
     public function destroy(Document $document)
     {
+        /** @var User $user */
         $user = Auth::user();
 
-        if ($user && $user->role !== 'admin' && $document->uploaded_by !== $user->id) {
+        if ($user && ! $user->isAdmin() && $document->uploaded_by !== $user->id) {
             abort(403, 'Anda tidak berhak menghapus dokumen ini.');
         }
 

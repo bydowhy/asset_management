@@ -32,7 +32,7 @@ const props = defineProps<{
         <div class="grid auto-rows-min gap-4 md:grid-cols-4">
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Total Equipment</CardTitle>
+                    <CardTitle class="text-lg font-medium">Total Equipment</CardTitle>
                     <Wrench class="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -41,7 +41,7 @@ const props = defineProps<{
             </Card>
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Total Assets</CardTitle>
+                    <CardTitle class="text-lg font-medium">Total Assets</CardTitle>
                     <Package class="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -50,7 +50,7 @@ const props = defineProps<{
             </Card>
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Active Assets</CardTitle>
+                    <CardTitle class="text-lg font-medium">Active Assets</CardTitle>
                     <CheckCircle class="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
@@ -59,7 +59,7 @@ const props = defineProps<{
             </Card>
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Failures (30d)</CardTitle>
+                    <CardTitle class="text-lg font-medium">Failures (30d)</CardTitle>
                     <AlertTriangle class="h-4 w-4 text-red-500" />
                 </CardHeader>
                 <CardContent>
@@ -73,7 +73,7 @@ const props = defineProps<{
             <!-- Recent Failures -->
             <Card>
                 <CardHeader>
-                    <CardTitle>Recent Failures</CardTitle>
+                    <CardTitle class="text-lg font-medium">Recent Failures</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ul class="space-y-2">
@@ -94,7 +94,7 @@ const props = defineProps<{
             <!-- Equipment Attention -->
             <Card>
                 <CardHeader>
-                    <CardTitle>Equipment Attention (90d)</CardTitle>
+                    <CardTitle class="text-lg font-medium">Equipment Attention (90d)</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ul class="space-y-2">

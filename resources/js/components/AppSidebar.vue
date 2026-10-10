@@ -32,7 +32,10 @@ import type { NavItem } from '@/types';
 
 const page = usePage();
 
-const isAdmin = computed(() => page.props.auth?.user?.role === 'admin');
+const isAdmin = computed(() => {
+    const role = (page.props.auth as any)?.user?.role;
+    return role === 'admin' || role === 'super_admin';
+});
 
 const mainNavItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [

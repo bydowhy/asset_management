@@ -28,8 +28,8 @@ class Failure extends Model
         return $this->belongsTo(Asset::class);
     }
 
-    public function createdBy(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by')->withTrashed();
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

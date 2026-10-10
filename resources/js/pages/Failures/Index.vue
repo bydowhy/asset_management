@@ -73,7 +73,7 @@ watch([assetId, failureType, from, to], () => {
                         <TableCell>{{ f.asset?.asset_code ?? '-' }}</TableCell>
                         <TableCell>{{ f.failure_type }}</TableCell>
                         <TableCell>{{ f.downtime_hours ?? '-' }} h</TableCell>
-                        <TableCell class="text-sm">{{ f.created_by?.name ?? '-' }}</TableCell>
+                        <TableCell class="text-sm">{{ f.creator?.name ?? '-' }}</TableCell>
                         <TableCell class="text-right">
                             <Link :href="`/failures/${f.id}`">
                                 <Button variant="outline" size="sm">View</Button>

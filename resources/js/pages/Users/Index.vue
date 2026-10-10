@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -11,9 +11,44 @@ defineProps<{
     errors?: Record<string, string>;
 }>();
 
+const page = usePage();
+
 function destroy(user: any) {
     if (!confirm(`Hapus user "${user.username}"?`)) return;
     router.delete(`/users/${user.id}`, { preserveScroll: true });
+}
+
+function currentUser() {
+    return (page.props.auth as any)?.user;
+}
+
+function canEdit(user: any): boolean {
+    const me = currentUser();
+    if (!me) return false;
+
+    // Admin biasa tidak bisa edit super_admin
+    if (me.role === 'admin' && user.role === 'super_admin') return false;
+
+    return true;
+}
+
+function canDelete(user: any): boolean {
+    const me = currentUser();
+    if (!me) return false;
+
+    // Tidak bisa hapus diri sendiri
+    if (user.id === me.id) return false;
+
+    // Admin biasa tidak bisa hapus super_admin
+    if (me.role === 'admin' && user.role === 'super_admin') return false;
+
+    return true;
+}
+
+function roleVariant(role: string) {
+    if (role === 'super_admin') return 'default';
+    if (role === 'admin') return 'secondary';
+    return 'outline';
 }
 </script>
 
@@ -48,21 +83,33 @@ function destroy(user: any) {
                 </TableHeader>
                 <TableBody>
                     <TableRow v-for="user in users" :key="user.id">
-                        <TableCell class="font-mono text-sm">{{ user.username }}</TableCell>
+                        <TableCell class="font-mono text-sm">
+                            {{ user.username }}
+                            <Badge
+                                v-if="user.id === $page.props.auth?.user?.id"
+                                variant="secondary"
+                                class="ml-2 text-xs">
+                                You
+                            </Badge>
+                        </TableCell>
                         <TableCell class="font-medium">{{ user.name }}</TableCell>
                         <TableCell class="text-sm">{{ user.email }}</TableCell>
                         <TableCell class="text-sm">{{ user.department ?? '—' }}</TableCell>
                         <TableCell>
-                            <Badge :variant="user.role === 'admin' ? 'default' : 'secondary'">
-                                {{ user.role }}
+                            <Badge :variant="roleVariant(user.role)">
+                                {{ user.role === 'super_admin' ? 'Super Admin' : user.role }}
                             </Badge>
                         </TableCell>
                         <TableCell class="text-right">
                             <div class="flex justify-end gap-2">
-                                <Link :href="`/users/${user.id}/edit`">
+                                <Link v-if="canEdit(user)" :href="`/users/${user.id}/edit`">
                                     <Button variant="outline" size="sm">Edit</Button>
                                 </Link>
-                                <Button variant="destructive" size="sm" @click="destroy(user)">
+                                <Button
+                                    v-if="canDelete(user)"
+                                    variant="destructive"
+                                    size="sm"
+                                    @click="destroy(user)">
                                     Delete
                                 </Button>
                             </div>

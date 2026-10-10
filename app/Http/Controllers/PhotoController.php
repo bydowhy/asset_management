@@ -6,12 +6,14 @@ use App\Http\Requests\StorePhotoRequest;
 use App\Models\Asset;
 use App\Models\Equipment;
 use App\Models\Photo;
+use App\Models\User;
+use App\Services\AuditLogService;
 use App\Services\MediaService;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use App\Services\AuditLogService;
 
 class PhotoController extends Controller
 {
@@ -100,9 +102,10 @@ class PhotoController extends Controller
 
     public function destroy(Photo $photo)
     {
+        /** @var User $user */
         $user = Auth::user();
 
-        if ($user && $user->role !== 'admin' && $photo->uploaded_by !== $user->id) {
+        if ($user && ! $user->isAdmin() && $photo->uploaded_by !== $user->id) {
             abort(403, 'Anda tidak berhak menghapus foto ini.');
         }
 

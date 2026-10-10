@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DocumentController::index
- * @see app/Http/Controllers/DocumentController.php:25
+ * @see app/Http/Controllers/DocumentController.php:27
  * @route '/documents'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\DocumentController::create
- * @see app/Http/Controllers/DocumentController.php:46
+ * @see app/Http/Controllers/DocumentController.php:48
  * @route '/documents/create'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\DocumentController::store
- * @see app/Http/Controllers/DocumentController.php:61
+ * @see app/Http/Controllers/DocumentController.php:63
  * @route '/documents'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::store
- * @see app/Http/Controllers/DocumentController.php:61
+ * @see app/Http/Controllers/DocumentController.php:63
  * @route '/documents'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\DocumentController::store
- * @see app/Http/Controllers/DocumentController.php:61
+ * @see app/Http/Controllers/DocumentController.php:63
  * @route '/documents'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\DocumentController::store
- * @see app/Http/Controllers/DocumentController.php:61
+ * @see app/Http/Controllers/DocumentController.php:63
  * @route '/documents'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\DocumentController::store
- * @see app/Http/Controllers/DocumentController.php:61
+ * @see app/Http/Controllers/DocumentController.php:63
  * @route '/documents'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
 export const show = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
 show.url = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ show.url = (args: { document: string | { id: string } } | [document: string | { 
 
 /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
 show.get = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ show.get = (args: { document: string | { id: string } } | [document: string | { 
 })
 /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
 show.head = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ show.head = (args: { document: string | { id: string } } | [document: string | {
 
     /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
     const showForm = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ show.head = (args: { document: string | { id: string } } | [document: string | {
 
             /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
         showForm.get = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ show.head = (args: { document: string | { id: string } } | [document: string | {
         })
             /**
 * @see \App\Http\Controllers\DocumentController::show
- * @see app/Http/Controllers/DocumentController.php:91
+ * @see app/Http/Controllers/DocumentController.php:93
  * @route '/documents/{document}'
  */
         showForm.head = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ show.head = (args: { document: string | { id: string } } | [document: string | {
     show.form = showForm
 /**
 * @see \App\Http\Controllers\DocumentController::destroy
- * @see app/Http/Controllers/DocumentController.php:110
+ * @see app/Http/Controllers/DocumentController.php:112
  * @route '/documents/{document}'
  */
 export const destroy = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -329,7 +329,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::destroy
- * @see app/Http/Controllers/DocumentController.php:110
+ * @see app/Http/Controllers/DocumentController.php:112
  * @route '/documents/{document}'
  */
 destroy.url = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ destroy.url = (args: { document: string | { id: string } } | [document: string |
 
 /**
 * @see \App\Http\Controllers\DocumentController::destroy
- * @see app/Http/Controllers/DocumentController.php:110
+ * @see app/Http/Controllers/DocumentController.php:112
  * @route '/documents/{document}'
  */
 destroy.delete = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -372,7 +372,7 @@ destroy.delete = (args: { document: string | { id: string } } | [document: strin
 
     /**
 * @see \App\Http\Controllers\DocumentController::destroy
- * @see app/Http/Controllers/DocumentController.php:110
+ * @see app/Http/Controllers/DocumentController.php:112
  * @route '/documents/{document}'
  */
     const destroyForm = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -387,7 +387,7 @@ destroy.delete = (args: { document: string | { id: string } } | [document: strin
 
             /**
 * @see \App\Http\Controllers\DocumentController::destroy
- * @see app/Http/Controllers/DocumentController.php:110
+ * @see app/Http/Controllers/DocumentController.php:112
  * @route '/documents/{document}'
  */
         destroyForm.delete = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -403,7 +403,7 @@ destroy.delete = (args: { document: string | { id: string } } | [document: strin
     destroy.form = destroyForm
 /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
 export const download = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -418,7 +418,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
 download.url = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -451,7 +451,7 @@ download.url = (args: { document: string | { id: string } } | [document: string 
 
 /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
 download.get = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -460,7 +460,7 @@ download.get = (args: { document: string | { id: string } } | [document: string 
 })
 /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
 download.head = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -470,7 +470,7 @@ download.head = (args: { document: string | { id: string } } | [document: string
 
     /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
     const downloadForm = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -480,7 +480,7 @@ download.head = (args: { document: string | { id: string } } | [document: string
 
             /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
         downloadForm.get = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -489,7 +489,7 @@ download.head = (args: { document: string | { id: string } } | [document: string
         })
             /**
 * @see \App\Http\Controllers\DocumentController::download
- * @see app/Http/Controllers/DocumentController.php:100
+ * @see app/Http/Controllers/DocumentController.php:102
  * @route '/documents/{document}/download'
  */
         downloadForm.head = (args: { document: string | { id: string } } | [document: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

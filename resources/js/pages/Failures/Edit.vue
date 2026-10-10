@@ -27,7 +27,9 @@ function submit() {
     <Head :title="`Edit Failure - ${failure.failure_type}`" />
     <div class="mx-auto max-w-3xl space-y-4 p-4">
         <!-- Info banner: field yang tidak bisa diubah -->
-        <div class="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+        <div
+            v-if="!['admin', 'super_admin'].includes($page.props.auth?.user?.role ?? '')"
+            class="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
             <strong>Catatan:</strong> Asset dan tanggal failure tidak dapat diubah setelah
             laporan dibuat. Hubungi admin jika perlu koreksi.
         </div>

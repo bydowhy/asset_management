@@ -17,6 +17,10 @@ const form = useForm({
     role: 'user',
 });
 
+const props = defineProps<{
+    canPromote: boolean;
+}>();
+
 function submit() {
     form.post('/users');
 }
@@ -73,6 +77,7 @@ function submit() {
                         <SelectContent>
                             <SelectItem value="user">User</SelectItem>
                             <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem v-if="canPromote" value="super_admin">Super Admin</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

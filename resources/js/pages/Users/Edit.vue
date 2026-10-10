@@ -7,7 +7,10 @@ import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 
-const props = defineProps<{ user: any }>();
+const props = defineProps<{ 
+    user: any;
+    canPromote: boolean; 
+}>();
 
 const form = useForm({
     username: props.user.username,
@@ -77,6 +80,7 @@ function destroy() {
                         <SelectContent>
                             <SelectItem value="user">User</SelectItem>
                             <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem v-if="canPromote" value="super_admin">Super Admin</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

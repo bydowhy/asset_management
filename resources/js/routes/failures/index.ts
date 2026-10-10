@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\FailureController::index
- * @see app/Http/Controllers/FailureController.php:21
+ * @see app/Http/Controllers/FailureController.php:22
  * @route '/failures'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\FailureController::create
- * @see app/Http/Controllers/FailureController.php:50
+ * @see app/Http/Controllers/FailureController.php:51
  * @route '/failures/create'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\FailureController::store
- * @see app/Http/Controllers/FailureController.php:58
+ * @see app/Http/Controllers/FailureController.php:59
  * @route '/failures'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::store
- * @see app/Http/Controllers/FailureController.php:58
+ * @see app/Http/Controllers/FailureController.php:59
  * @route '/failures'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\FailureController::store
- * @see app/Http/Controllers/FailureController.php:58
+ * @see app/Http/Controllers/FailureController.php:59
  * @route '/failures'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\FailureController::store
- * @see app/Http/Controllers/FailureController.php:58
+ * @see app/Http/Controllers/FailureController.php:59
  * @route '/failures'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\FailureController::store
- * @see app/Http/Controllers/FailureController.php:58
+ * @see app/Http/Controllers/FailureController.php:59
  * @route '/failures'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
 export const show = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
 show.url = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ show.url = (args: { failure: string | { id: string } } | [failure: string | { id
 
 /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
 show.get = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ show.get = (args: { failure: string | { id: string } } | [failure: string | { id
 })
 /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
 show.head = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ show.head = (args: { failure: string | { id: string } } | [failure: string | { i
 
     /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
     const showForm = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ show.head = (args: { failure: string | { id: string } } | [failure: string | { i
 
             /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
         showForm.get = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ show.head = (args: { failure: string | { id: string } } | [failure: string | { i
         })
             /**
 * @see \App\Http\Controllers\FailureController::show
- * @see app/Http/Controllers/FailureController.php:76
+ * @see app/Http/Controllers/FailureController.php:77
  * @route '/failures/{failure}'
  */
         showForm.head = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ show.head = (args: { failure: string | { id: string } } | [failure: string | { i
     show.form = showForm
 /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
 export const edit = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -329,7 +329,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
 edit.url = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ edit.url = (args: { failure: string | { id: string } } | [failure: string | { id
 
 /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
 edit.get = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -371,7 +371,7 @@ edit.get = (args: { failure: string | { id: string } } | [failure: string | { id
 })
 /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
 edit.head = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -381,7 +381,7 @@ edit.head = (args: { failure: string | { id: string } } | [failure: string | { i
 
     /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
     const editForm = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -391,7 +391,7 @@ edit.head = (args: { failure: string | { id: string } } | [failure: string | { i
 
             /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
         editForm.get = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -400,7 +400,7 @@ edit.head = (args: { failure: string | { id: string } } | [failure: string | { i
         })
             /**
 * @see \App\Http\Controllers\FailureController::edit
- * @see app/Http/Controllers/FailureController.php:83
+ * @see app/Http/Controllers/FailureController.php:84
  * @route '/failures/{failure}/edit'
  */
         editForm.head = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -416,7 +416,7 @@ edit.head = (args: { failure: string | { id: string } } | [failure: string | { i
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
 export const update = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -431,7 +431,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
 update.url = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -464,7 +464,7 @@ update.url = (args: { failure: string | { id: string } } | [failure: string | { 
 
 /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
 update.put = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -473,7 +473,7 @@ update.put = (args: { failure: string | { id: string } } | [failure: string | { 
 })
 /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
 update.patch = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -483,7 +483,7 @@ update.patch = (args: { failure: string | { id: string } } | [failure: string | 
 
     /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
     const updateForm = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -498,7 +498,7 @@ update.patch = (args: { failure: string | { id: string } } | [failure: string | 
 
             /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
         updateForm.put = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -512,7 +512,7 @@ update.patch = (args: { failure: string | { id: string } } | [failure: string | 
         })
             /**
 * @see \App\Http\Controllers\FailureController::update
- * @see app/Http/Controllers/FailureController.php:92
+ * @see app/Http/Controllers/FailureController.php:93
  * @route '/failures/{failure}'
  */
         updateForm.patch = (args: { failure: string | { id: string } } | [failure: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

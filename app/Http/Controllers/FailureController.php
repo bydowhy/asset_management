@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Models\User;
 
 class FailureController extends Controller
 {
@@ -20,7 +21,7 @@ class FailureController extends Controller
 
     public function index(Request $request)
     {
-        $query = Failure::with('asset.assetType', 'createdBy');
+        $query = Failure::with('asset.assetType', 'creator');
 
         if ($request->filled('asset_id')) {
             $query->where('asset_id', $request->asset_id);
@@ -75,7 +76,7 @@ class FailureController extends Controller
 
     public function show(Failure $failure)
     {
-        $failure->load('asset.assetType', 'createdBy');
+        $failure->load('asset.assetType', 'creator');
 
         return Inertia::render('Failures/Show', ['failure' => $failure]);
     }
@@ -91,9 +92,10 @@ class FailureController extends Controller
 
     public function update(UpdateFailureRequest $request, Failure $failure)
     {
-        // Hanya creator atau admin yang boleh edit
+        /** @var User $user */
         $user = Auth::user();
-        if ($user->role !== 'admin' && $failure->created_by !== $user->id) {
+
+        if (! $user->isAdmin() && $failure->created_by !== $user->id) {
             abort(403, 'Anda tidak berhak mengubah failure ini.');
         }
 

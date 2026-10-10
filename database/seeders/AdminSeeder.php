@@ -18,9 +18,21 @@ class AdminSeeder extends Seeder
                 'username' => 'mirza',
                 'name' => 'Mirza',
                 'email' => 'mirza.alfarisi88@gmail.com',
-                'role' => 'admin',
+                'role' => 'super_admin',
                 'password' => Hash::make('rahasiaAllah'),
                 'department' => 'Engineering',
+                'email_verified_at' => now()
+            ],
+        );
+
+        User::updateOrCreate(
+            [
+                'username' => 'rumah',
+                'name' => 'Rumah',
+                'email' => 'rumah@gmail.com',
+                'role' => 'admin',
+                'password' => Hash::make('rahasiaAllah'),
+                'department' => 'IT',
                 'email_verified_at' => now()
             ],
         );
@@ -32,7 +44,7 @@ class AdminSeeder extends Seeder
                 'email' => 'mejabelajar.mebel@gmail.com',
                 'role' => 'user',
                 'password' => Hash::make('rahasiaAllah'),
-                'department' => 'Marketing',
+                'department' => 'Purchasing',
                 'email_verified_at' => now()
             ],
         );

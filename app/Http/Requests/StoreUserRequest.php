@@ -32,7 +32,7 @@ class StoreUserRequest extends FormRequest
                 'string', 'min:8', 'confirmed',
             ],
             'department' => ['nullable', 'string', 'max:255'],
-            'role' => ['required', Rule::in(['admin', 'user'])],
+            'role' => ['required', Rule::in(['admin', 'user', 'super_admin'])],
         ];
     }
 
