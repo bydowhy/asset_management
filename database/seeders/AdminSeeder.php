@@ -25,28 +25,28 @@ class AdminSeeder extends Seeder
             ],
         );
 
-        User::updateOrCreate(
-            [
-                'username' => 'rumah',
-                'name' => 'Rumah',
-                'email' => 'rumah@gmail.com',
-                'role' => 'admin',
-                'password' => Hash::make('rahasiaAllah'),
-                'department' => 'IT',
-                'email_verified_at' => now()
-            ],
-        );
+        // User::updateOrCreate(
+        //     [
+        //         'username' => 'rumah',
+        //         'name' => 'Rumah',
+        //         'email' => 'rumah@gmail.com',
+        //         'role' => 'admin',
+        //         'password' => Hash::make('rahasiaAllah'),
+        //         'department' => 'IT',
+        //         'email_verified_at' => now()
+        //     ],
+        // );
 
-        User::updateOrCreate(
-            [
-                'username' => 'mebel',
-                'name' => 'Mebel',
-                'email' => 'mejabelajar.mebel@gmail.com',
-                'role' => 'user',
-                'password' => Hash::make('rahasiaAllah'),
-                'department' => 'Purchasing',
-                'email_verified_at' => now()
-            ],
-        );
+        // User::updateOrCreate(
+        //     [
+        //         'username' => 'mebel',
+        //         'name' => 'Mebel',
+        //         'email' => 'mejabelajar.mebel@gmail.com',
+        //         'role' => 'user',
+        //         'password' => Hash::make('rahasiaAllah'),
+        //         'department' => 'Purchasing',
+        //         'email_verified_at' => now()
+        //     ],
+        // );
     }
 }
